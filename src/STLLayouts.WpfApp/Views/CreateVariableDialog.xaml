@@ -1,0 +1,76 @@
+<Window x:Class="STLLayouts.WpfApp.Views.CreateVariableDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create New Variable" Height="500" Width="600"
+        WindowStartupLocation="CenterOwner"
+        Background="White">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Create New Variable" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Variable Name -->
+                <TextBlock Text="Variable Name *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding VariableName, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="32" Margin="0,0,0,15"/>
+
+                <!-- Database Field -->
+                <TextBlock Text="Database Field" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding DatabaseField, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="32" Margin="0,0,0,15"/>
+
+                <!-- SQL Expression -->
+                <TextBlock Text="SQL Expression" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding SqlExpression, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="32" Margin="0,0,0,15"/>
+
+                <!-- Data Type -->
+                <TextBlock Text="Data Type" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <ComboBox SelectedItem="{Binding DataType}" Height="32" Margin="0,0,0,15">
+                    <ComboBoxItem Content="String"/>
+                    <ComboBoxItem Content="Integer"/>
+                    <ComboBoxItem Content="Decimal"/>
+                    <ComboBoxItem Content="DateTime"/>
+                    <ComboBoxItem Content="Boolean"/>
+                </ComboBox>
+
+                <!-- Category -->
+                <TextBlock Text="Category" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <ComboBox SelectedItem="{Binding Category}" IsEditable="True" Height="32" Margin="0,0,0,15">
+                    <ComboBoxItem Content="Job"/>
+                    <ComboBoxItem Content="Customer"/>
+                    <ComboBoxItem Content="Product"/>
+                    <ComboBoxItem Content="Financial"/>
+                    <ComboBoxItem Content="Other"/>
+                </ComboBox>
+
+                <!-- Description -->
+                <TextBlock Text="Description" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,15"/>
+
+                <!-- Default Value -->
+                <TextBlock Text="Default Value" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding DefaultValue, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="32" Margin="0,0,0,15"/>
+
+                <!-- Is Required -->
+                <CheckBox Content="Required" IsChecked="{Binding IsRequired}" Margin="0,0,0,15"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Create" Command="{Binding CreateCommand}" 
+                    Width="100" Height="32" Margin="0,0,10,0"/>
+            <Button Content="Cancel" Click="Cancel_Click" 
+                    Width="100" Height="32"/>
+        </StackPanel>
+    </Grid>
+</Window>

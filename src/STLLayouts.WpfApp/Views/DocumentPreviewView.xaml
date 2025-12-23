@@ -1,0 +1,61 @@
+<UserControl x:Class="STLLayouts.WpfApp.Views.DocumentPreviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="Generated Documents" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <!-- Documents List -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding GeneratedDocuments}" SelectedItem="{Binding SelectedDocument}"
+                  AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="*"/>
+                <DataGridTextColumn Header="Size (KB)" Binding="{Binding FileSizeBytes}" Width="100"/>
+                <DataGridTextColumn Header="Duration (ms)" Binding="{Binding GenerationDuration.TotalMilliseconds}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Separator -->
+        <Separator Grid.Row="2" Margin="0,10,0,10"/>
+
+        <!-- Variables -->
+        <TextBlock Grid.Row="2" Text="Populated Variables" FontWeight="Bold"/>
+        
+        <DataGrid Grid.Row="3" ItemsSource="{Binding PopulatedVariables}" 
+                  AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Variable Name" Binding="{Binding Key}" Width="200"/>
+                <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Status and Buttons -->
+        <Grid Grid.Row="4" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" Foreground="Gray" VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Open" Command="{Binding OpenDocumentCommand}" 
+                        Padding="15,8" Margin="0,0,10,0"/>
+                <Button Content="Copy Path" Command="{Binding CopyPathCommand}" 
+                        Padding="15,8" Margin="0,0,10,0"/>
+                <Button Content="Export Metadata" Command="{Binding ExportMetadataCommand}" 
+                        Padding="15,8" Margin="0,0,10,0"/>
+                <Button Content="Close" Width="80" Padding="15,8"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

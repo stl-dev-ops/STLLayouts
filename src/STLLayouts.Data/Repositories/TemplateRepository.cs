@@ -1,0 +1,35 @@
+using Microsoft.EntityFrameworkCore;
+using STLLayouts.Core.Entities;
+using STLLayouts.Core.Interfaces;
+
+namespace STLLayouts.Data.Repositories;
+
+public class TemplateRepository : Repository<Template>, ITemplateRepository
+{
+    public TemplateRepository(ApplicationDbContext context) : base(context)
+    {
+    }
+
+    public async Task<List<Template>> GetActiveTemplatesAsync()
+    {
+        return await _dbSet
+            .Where(t => t.IsActive)
+            .OrderBy(t => t.TemplateName)
+            .ToListAsync();
+    }
+
+    public async Task<List<Template>> GetTemplatesByCategoryAsync(string category)
+    {
+        return await _dbSet
+            .Where(t => t.Category == category)
+            .OrderBy(t => t.TemplateName)
+            .ToListAsync();
+    }
+
+    public async Task<Template?> GetTemplateWithVersionsAsync(Guid templateId)
+    {
+        return await _dbSet
+            .Include(t => t.Versions)
+            .FirstOrDefaultAsync(t => t.TemplateId == templateId);
+}
+}

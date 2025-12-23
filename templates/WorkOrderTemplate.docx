@@ -1,0 +1,7 @@
+﻿Work Order Template
+
+Job Number: {{JobNumber}}
+Customer: {{CustomerName}}
+Product: {{ProductDescription}}
+Quantity: {{Quantity}}
+Due Date: {{DueDate}}
