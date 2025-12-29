@@ -1,0 +1,4 @@
+SELECT dbo_stlST_pressRollBadRowReason.reason, dbo_stlST_pressRollBadRowReason.stlST_pressRollBadRowReasonID
+FROM dbo_stlST_pressRollBadRowReason
+ORDER BY dbo_stlST_pressRollBadRowReason.stlST_pressRollBadRowReasonID;
+

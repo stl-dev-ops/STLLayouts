@@ -1,0 +1,4 @@
+SELECT dbo_vw_stlST_RewindJobSignOff.*
+FROM dbo_vw_stlST_RewindJobSignOff
+ORDER BY dbo_vw_stlST_RewindJobSignOff.rewindBrickNo;
+

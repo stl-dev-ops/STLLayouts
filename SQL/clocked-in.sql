@@ -1,0 +1,62 @@
+SELECT TOP (1000) clock.wn___ref
+	  ,name.wn_vnaam
+	  ,name.wn_naam_
+	  ,clock.[dos__ref]
+      ,clock.[soort___]
+      ,clock.[datum___]
+      ,clock.[starten_]
+      ,clock.[stoppen_]
+      ,clock.[aantal__]
+      ,clock.[plg__ref]
+      ,clock.[wp___ref]
+	  ,mach.wp_naam_
+      ,clock.[akt__ref]
+      ,clock.[antw__01]
+      ,clock.[antw__02]
+      ,clock.[antw__03]
+      ,clock.[antw__04]
+      ,clock.[antw__05]
+      ,clock.[antw__06]
+      ,clock.[antw__07]
+      ,clock.[antw__08]
+      ,clock.[antw__09]
+      ,clock.[antw__10]
+      ,clock.[art__ref]
+      ,clock.[artd_ref]
+      ,clock.[artd2ref]
+      ,clock.[artd3ref]
+      ,clock.[hlf__ref]
+      ,clock.[hlf2_ref]
+      ,clock.[hlf3_ref]
+      ,clock.[rollen__]
+      ,clock.[andro_kg]
+      ,clock.[papr_kgm]
+      ,clock.[art__vrd]
+      ,clock.[vtrf_ref]
+      ,clock.[formt__1]
+      ,clock.[formt__2]
+      ,clock.[ord__ref]
+      ,clock.[suborder]
+      ,clock.[kpn__ref]
+      ,clock.[dg___ref]
+      ,clock.[production_flow_id]
+      ,clock.[workstep_id]
+      ,clock.[run_id]
+      ,clock.[produktf]
+      ,clock.[vrs_refs]
+      ,clock.[vrm__ref]
+      ,clock.[kom__ref]
+      ,clock.[komment_]
+      ,clock.[onderbrk]
+      ,clock.[pldv_ref]
+      ,clock.[teller__]
+      ,clock.[deviceid]
+      ,clock.[main__op]
+      ,clock.[rowid]
+  FROM [sqlb00].[dbo].[w_atl1__] clock
+  JOIN werknm__ name
+	ON name.wn___ref = clock.wn___ref
+  JOIN werkpo__ mach
+	ON mach.wp___ref = clock.wp___ref
+
+  WHERE clock.soort___ = '2'

@@ -1,0 +1,20 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlCC_OperatorInterventionTypes]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlCC_OperatorInterventionTypes](
+	[ID] [int] NOT NULL,
+	[OperatorIntervention] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlCC_GravureOperatorInterventions] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+SET ANSI_PADDING ON
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[stlCC_OperatorInterventionTypes]') AND name = N'IX_stlCC_OperatorInterventionTypes')
+CREATE UNIQUE NONCLUSTERED INDEX [IX_stlCC_OperatorInterventionTypes] ON [dbo].[stlCC_OperatorInterventionTypes]
+(
+	[OperatorIntervention] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]

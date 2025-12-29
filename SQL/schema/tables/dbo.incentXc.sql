@@ -1,0 +1,18 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[incentXc]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[incentXc](
+	[incentXcID] [int] IDENTITY(1,1) NOT NULL,
+	[kla__ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_incentXc] PRIMARY KEY CLUSTERED 
+(
+	[incentXcID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_incentXc_kla__ref]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[incentXc] ADD  CONSTRAINT [DF_incentXc_kla__ref]  DEFAULT ('') FOR [kla__ref]
+END
+

@@ -1,0 +1,5 @@
+CREATE USER [SUPERLABEL\jeffr] FOR LOGIN [SUPERLABEL\jeffr];
+
+
+GO
+

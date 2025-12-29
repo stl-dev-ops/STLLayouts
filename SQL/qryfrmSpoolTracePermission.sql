@@ -1,0 +1,3 @@
+SELECT spoolTracePermission.spoolTracePermissionID, spoolTracePermission.tmstamp, spoolTracePermission.lastModified, spoolTracePermission.wn___ref, spoolTracePermission.unlockPressRoll, spoolTracePermission.unlockRewindBrick
+FROM spoolTracePermission;
+

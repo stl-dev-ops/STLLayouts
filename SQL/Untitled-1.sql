@@ -1,0 +1,1 @@
+-- @mssql Chat Query Editor (STL-SQL1\CRMDB:sqlb00:undefined)

@@ -1,0 +1,18 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlTT_Cat1]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlTT_Cat1](
+	[stlTT_Cat1ID] [int] IDENTITY(1,1) NOT NULL,
+	[cat1Description] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlTT_Cat1] PRIMARY KEY CLUSTERED 
+(
+	[stlTT_Cat1ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_stlTT_Cat1_cat1Description]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[stlTT_Cat1] ADD  CONSTRAINT [DF_stlTT_Cat1_cat1Description]  DEFAULT ('') FOR [cat1Description]
+END
+

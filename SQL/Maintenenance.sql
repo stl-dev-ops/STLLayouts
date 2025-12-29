@@ -1,0 +1,147 @@
+DECLARE @StartDate DATETIME
+DECLARE @EndDate DATETIME
+
+SET @StartDate = '09/01/2025'
+SET @EndDate = '10/01/2025';
+
+WITH MaintenanceClockings AS (
+    SELECT
+        h.wp___ref AS MachineID,
+        SUM(
+            DATEDIFF(MINUTE,
+                CASE
+                    WHEN CAST(LEFT(h.starten_, CHARINDEX(':', h.starten_) - 1) AS INT) >= 24 THEN
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), DATEADD(DAY, 1, h.datum___), 120) + ' ' +
+                            RIGHT('0' + CAST(CAST(LEFT(h.starten_, CHARINDEX(':', h.starten_) - 1) AS INT) - 24 AS VARCHAR), 2) + ':' +
+                            RIGHT('0' + SUBSTRING(h.starten_, CHARINDEX(':', h.starten_) + 1, 2), 2), 120)
+                    ELSE
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.starten_, 120)
+                END,
+                CASE
+                    WHEN CAST(LEFT(h.stoppen_, CHARINDEX(':', h.stoppen_) - 1) AS INT) >= 24 THEN
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), DATEADD(DAY, 1, h.datum___), 120) + ' ' +
+                            RIGHT('0' + CAST(CAST(LEFT(h.stoppen_, CHARINDEX(':', h.stoppen_) - 1) AS INT) - 24 AS VARCHAR), 2) + ':' +
+                            RIGHT('0' + SUBSTRING(h.stoppen_, CHARINDEX(':', h.stoppen_) + 1, 2), 2), 120)
+                    ELSE
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.stoppen_, 120)
+                END
+            )
+        ) AS MaintenanceMinutes
+    FROM dbo.hispnt__ AS h
+    LEFT JOIN dbo.wpakt___ AS wpakt
+        ON h.wp___ref = wpakt.wp___ref
+        AND h.akt__ref = wpakt.akt__ref
+    WHERE wpakt.akt_oms_ = 'Maintenance called, machine down'
+      AND h.datum___ >= @StartDate AND h.datum___ < @EndDate
+      AND h.starten_ IS NOT NULL AND h.starten_ <> ''
+      AND h.stoppen_ IS NOT NULL AND h.stoppen_ <> ''
+      AND ISDATE(CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.starten_) = 1
+      AND ISDATE(CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.stoppen_) = 1
+    GROUP BY h.wp___ref
+),
+TotalClockings AS (
+    SELECT
+        h.wp___ref AS MachineID,
+        wp.wp_naam_ AS MachineName,
+        SUM(
+            DATEDIFF(MINUTE,
+                CASE
+                    WHEN CAST(LEFT(h.starten_, CHARINDEX(':', h.starten_) - 1) AS INT) >= 24 THEN
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), DATEADD(DAY, 1, h.datum___), 120) + ' ' +
+                            RIGHT('0' + CAST(CAST(LEFT(h.starten_, CHARINDEX(':', h.starten_) - 1) AS INT) - 24 AS VARCHAR), 2) + ':' +
+                            RIGHT('0' + SUBSTRING(h.starten_, CHARINDEX(':', h.starten_) + 1, 2), 2), 120)
+                    ELSE
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.starten_, 120)
+                END,
+                CASE
+                    WHEN CAST(LEFT(h.stoppen_, CHARINDEX(':', h.stoppen_) - 1) AS INT) >= 24 THEN
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), DATEADD(DAY, 1, h.datum___), 120) + ' ' +
+                            RIGHT('0' + CAST(CAST(LEFT(h.stoppen_, CHARINDEX(':', h.stoppen_) - 1) AS INT) - 24 AS VARCHAR), 2) + ':' +
+                            RIGHT('0' + SUBSTRING(h.stoppen_, CHARINDEX(':', h.stoppen_) + 1, 2), 2), 120)
+                    ELSE
+                        CONVERT(DATETIME,
+                            CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.stoppen_, 120)
+                END
+            )
+        ) AS TotalMinutes
+    FROM dbo.hispnt__ AS h
+    LEFT JOIN dbo.wpakt___ AS wpakt
+        ON h.wp___ref = wpakt.wp___ref
+        AND h.akt__ref = wpakt.akt__ref
+    LEFT JOIN dbo.werkpo__ AS wp
+        ON h.wp___ref = wp.wp___ref
+    WHERE h.datum___ >= @StartDate AND h.datum___ < @EndDate
+      AND h.starten_ IS NOT NULL AND h.starten_ <> ''
+      AND h.stoppen_ IS NOT NULL AND h.stoppen_ <> ''
+      AND ISDATE(CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.starten_) = 1
+      AND ISDATE(CONVERT(VARCHAR(10), h.datum___, 120) + ' ' + h.stoppen_) = 1
+    GROUP BY h.wp___ref, wp.wp_naam_
+),
+TimeSlotPerPlanDay AS (
+    SELECT
+        cap.plpl_ref,
+        cap.day,
+        SUM(CAST(ISNULL(captsl.duration, 0) AS FLOAT) / 60000.0) AS DurationMinutes
+    FROM dbo.planpl_capacity__ AS cap
+    JOIN dbo.planpl_capacity_timeslot__ AS captsl
+        ON captsl.plpl_ref = cap.plpl_ref AND captsl.day = cap.day
+    WHERE cap.day >= @StartDate AND cap.day < @EndDate
+    GROUP BY cap.plpl_ref, cap.day
+),
+PlanMachineMap AS (
+    SELECT DISTINCT
+        cap.plpl_ref,
+        wpakt.wp___ref AS MachineID
+    FROM dbo.planpl_capacity__ AS cap
+    LEFT JOIN dbo.plandv__ AS plandv
+        ON cap.plpl_ref = plandv.plpl_ref
+    LEFT JOIN dbo.wpakt___ AS wpakt
+        ON cap.plpl_ref = wpakt.plpl_ref AND wpakt.akt__ref = plandv.akt__ref
+    WHERE wpakt.wp___ref IS NOT NULL
+)
+, TimeSlotDurations AS (
+    SELECT
+        pmm.MachineID,
+        SUM(ISNULL(ts.DurationMinutes, 0)) AS DurationMinutes
+    FROM TimeSlotPerPlanDay ts
+    JOIN PlanMachineMap pmm
+        ON ts.plpl_ref = pmm.plpl_ref
+    GROUP BY pmm.MachineID
+),
+Capacity AS (
+    SELECT
+        MachineID,
+        SUM(ISNULL(DurationMinutes, 0)) AS ScheduledMinutes
+    FROM TimeSlotDurations
+    GROUP BY MachineID
+)
+SELECT
+    t.MachineID,
+    t.MachineName,
+    CAST(COALESCE(m.MaintenanceMinutes,0) / 60 AS VARCHAR) + ':' +
+    RIGHT('0' + CAST(COALESCE(m.MaintenanceMinutes,0) % 60 AS VARCHAR), 2) AS MaintenanceHours,
+    CAST(COALESCE(m.MaintenanceMinutes,0) AS FLOAT) / 60 AS MaintenanceHoursDecimal,
+    CAST(t.TotalMinutes / 60 AS VARCHAR) + ':' +
+    RIGHT('0' + CAST(t.TotalMinutes % 60 AS VARCHAR), 2) AS TotalHours,
+    CAST(t.TotalMinutes AS FLOAT) / 60 AS TotalHoursDecimal,
+    CAST(CAST(ISNULL(c.ScheduledMinutes,0) AS INT) / 60 AS VARCHAR) + ':' +
+    RIGHT('0' + CAST(CAST(ISNULL(c.ScheduledMinutes,0) AS INT) % 60 AS VARCHAR), 2) AS ScheduledCapacityHours,
+    ISNULL(c.ScheduledMinutes,0) / 60.0 AS ScheduledHoursDecimal,
+    CASE WHEN t.TotalMinutes = 0 THEN 0
+         ELSE CAST(COALESCE(m.MaintenanceMinutes,0) AS FLOAT) / t.TotalMinutes
+    END AS MaintenancePercentOfActual,
+    CASE WHEN ISNULL(c.ScheduledMinutes,0) = 0 THEN 0
+         ELSE COALESCE(m.MaintenanceMinutes,0) / ISNULL(c.ScheduledMinutes,0)
+    END AS MaintenancePercentOfScheduled
+FROM TotalClockings t
+LEFT JOIN MaintenanceClockings m ON t.MachineID = m.MachineID
+RIGHT JOIN Capacity c ON t.MachineID = c.MachineID
+WHERE COALESCE(c.ScheduledMinutes,0) > 0
+ORDER BY t.MachineName;

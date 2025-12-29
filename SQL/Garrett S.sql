@@ -1,0 +1,5 @@
+CREATE USER [Garrett S] FOR LOGIN [SUPERLABEL\garretts];
+
+
+GO
+

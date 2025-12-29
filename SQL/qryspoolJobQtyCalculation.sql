@@ -1,0 +1,4 @@
+SELECT spoolJobQtyCalculation.*
+FROM spoolJobQtyCalculation
+ORDER BY spoolJobQtyCalculation.spoolJobQtyCalculationID;
+

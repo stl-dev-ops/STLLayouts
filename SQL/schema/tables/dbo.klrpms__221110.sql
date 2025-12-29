@@ -1,0 +1,48 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[klrpms__221110]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[klrpms__221110](
+	[klpmsref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[geblokk_] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[klpmsrpn] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[omschr__] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[quadri__] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[fam_geel] [int] NOT NULL,
+	[fam_blau] [int] NOT NULL,
+	[wit_zwrt] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[soort___] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[srt_inkt] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[color___] [int] NOT NULL,
+	[ink01ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink02ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink03ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink04ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink05ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink06ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink07ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ink08ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ant_dl01] [float] NOT NULL,
+	[ant_dl02] [float] NOT NULL,
+	[ant_dl03] [float] NOT NULL,
+	[ant_dl04] [float] NOT NULL,
+	[ant_dl05] [float] NOT NULL,
+	[ant_dl06] [float] NOT NULL,
+	[ant_dl07] [float] NOT NULL,
+	[ant_dl08] [float] NOT NULL,
+	[antdltot] [float] NOT NULL,
+	[kstdpref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[kstduref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[kstdrref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[kstdvref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[inkrgkpe] [float] NOT NULL,
+	[jdfcbook] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[jdfentry] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[cmyk____] [nvarchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
+	[cmykovg_] [nvarchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
+	[srgb____] [nvarchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
+	[lab_____] [nvarchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
+	[dt__sync] [datetime2](3) NOT NULL,
+	[rowid] [int] IDENTITY(1,1) NOT NULL
+) ON [PRIMARY]
+END

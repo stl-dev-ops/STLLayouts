@@ -1,0 +1,4 @@
+create view aging (daysdiff, invoicid, year____, period__, doctype, docdate, duedate_, custid__, custgpid, custname, payterm_, credit__, custkw__, totalinv, totpayed, tottopay ) as  select   daysdiff=DateDiff("d",vrvl_dat, getdate()), invoicid=vkdtrg__.fak__ref,  year____=vkdtrg__.bkj__ref,  period__=vkdtrg__.peri_ref,  doctype_=case(vkdtrg__.dok__srt)   when '1' then 'Invoice'   else 'Credit note'   end,  Docdate_=vkdtrg__.dok__dat,  Duedate_=vkdtrg__.vrvl_dat,  custid__=vkdtrg__.kla__ref, custgpid=(select cdeklaap from klabas__ where klabas__.kla__ref=vkdtrg__.kla__ref), custname=(select naam____ from klabas__ where klabas__.kla__ref=vkdtrg__.kla__ref), payterm_=(select betk_ref from klabas__ where klabas__.kla__ref=vkdtrg__.kla__ref), credit__=(select amo__akn from klabas__ where klabas__.kla__ref=vkdtrg__.kla__ref), custkw__=vkdtrg__.kla__rpn,  totalinv=vkdtrg__.totf__vm,  totpayed=vkdtrg__.betd__vm,  tottopay=vkdtrg__.ngbet_vm     from vkdtrg__
+
+GO
+

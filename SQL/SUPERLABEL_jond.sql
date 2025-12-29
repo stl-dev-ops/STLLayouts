@@ -1,0 +1,6 @@
+CREATE LOGIN [SUPERLABEL\jond]
+    FROM WINDOWS WITH DEFAULT_LANGUAGE = [us_english];
+
+
+GO
+

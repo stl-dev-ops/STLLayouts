@@ -1,0 +1,4 @@
+SELECT dbo_stlST_RewindBrick.stlST_RewindBrickID, Min(dbo_stlST_RewindBrick.labelsPerRow) AS STMinLabelsPerRow, Count(dbo_stlST_RewindBrickSKU.sku__ref) AS STSkuCount
+FROM dbo_stlST_RewindBrick INNER JOIN dbo_stlST_RewindBrickSKU ON dbo_stlST_RewindBrick.stlST_RewindBrickID = dbo_stlST_RewindBrickSKU.stlST_RewindBrickID
+GROUP BY dbo_stlST_RewindBrick.stlST_RewindBrickID;
+

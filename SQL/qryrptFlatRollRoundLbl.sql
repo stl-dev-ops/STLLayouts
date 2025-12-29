@@ -1,0 +1,3 @@
+SELECT Format([etiket_b]*25.4,"#,##0.0") & 'mm x ' & Format([aant_rol]*[etiket_h]*25.4/1000,"#,##0.0") & "M    " & Format([etiket_b],"#,##0.0") & '''' & ' x ' & Format([aant_rol],"#,##0.0") & '''' AS MetricFeet, 'INK ' & IIf([wikk____]<'5','OUTSIDE','INSIDE') AS Winding, dbo_afgsku__.sku__ref AS SKU, 'Lot #: ' & [dbo_stlST_RewindBrick].[ord__ref] AS Lot
+FROM ((dbo_afgsku__ INNER JOIN dbo_afgart__ ON dbo_afgsku__.afg__ref = dbo_afgart__.afg__ref) INNER JOIN dbo_stlST_RewindBrickSKU ON dbo_afgsku__.sku__ref = dbo_stlST_RewindBrickSKU.sku__ref) INNER JOIN dbo_stlST_RewindBrick ON dbo_stlST_RewindBrickSKU.stlST_RewindBrickID = dbo_stlST_RewindBrick.stlST_RewindBrickID;
+

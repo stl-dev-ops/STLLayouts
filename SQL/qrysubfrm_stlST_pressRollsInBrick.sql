@@ -1,0 +1,4 @@
+SELECT dbo_stlST_PressRollXstlST_RewindBrick.*, dbo_stlST_PressRoll.hlf__ref, dbo_stlST_PressRoll.inh__oms
+FROM dbo_stlST_PressRollXstlST_RewindBrick INNER JOIN dbo_stlST_PressRoll ON dbo_stlST_PressRollXstlST_RewindBrick.stlST_PressRollID = dbo_stlST_PressRoll.stlST_PressRollID
+ORDER BY dbo_stlST_PressRollXstlST_RewindBrick.stlST_PressRollXstlST_RewindBrickID;
+

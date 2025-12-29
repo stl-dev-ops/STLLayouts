@@ -1,0 +1,13 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlNB_NewBusinessStatus]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlNB_NewBusinessStatus](
+	[stlNB_NewBusinessStatusID] [int] NOT NULL,
+	[NewBusinessStatus] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlNB_NewBusinessStatus] PRIMARY KEY CLUSTERED 
+(
+	[stlNB_NewBusinessStatusID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END

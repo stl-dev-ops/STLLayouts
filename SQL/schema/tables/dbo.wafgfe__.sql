@@ -1,0 +1,88 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[wafgfe__]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[wafgfe__](
+	[dgbk_ref] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+	[bkj__ref] [nvarchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[fak__ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[edi__ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[redo_tlr] [int] NOT NULL,
+	[edi__vlg] [int] NOT NULL,
+	[edi__tst] [nvarchar](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[edi__dat] [date] NOT NULL,
+	[edi__uur] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[jobnredi] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[resp_key] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[resp_txt] [nvarchar](max) COLLATE Latin1_General_CI_AS NOT NULL,
+	[rowid] [int] IDENTITY(1,1) NOT NULL,
+ CONSTRAINT [wafgfei0] PRIMARY KEY CLUSTERED 
+(
+	[dgbk_ref] ASC,
+	[bkj__ref] ASC,
+	[fak__ref] ASC,
+	[edi__ref] ASC,
+	[redo_tlr] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__dgbk_ref]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__dgbk_ref]  DEFAULT ('') FOR [dgbk_ref]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__bkj__ref]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__bkj__ref]  DEFAULT ('') FOR [bkj__ref]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__fak__ref]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__fak__ref]  DEFAULT ('') FOR [fak__ref]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__edi__ref]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__edi__ref]  DEFAULT ('') FOR [edi__ref]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__redo_tlr]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__redo_tlr]  DEFAULT ((0)) FOR [redo_tlr]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__edi__vlg]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__edi__vlg]  DEFAULT ((0)) FOR [edi__vlg]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__edi__tst]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__edi__tst]  DEFAULT ('') FOR [edi__tst]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__edi__dat]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__edi__dat]  DEFAULT (CONVERT([date],'19800101',(112))) FOR [edi__dat]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__edi__uur]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__edi__uur]  DEFAULT ('') FOR [edi__uur]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__jobnredi]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__jobnredi]  DEFAULT ('') FOR [jobnredi]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__resp_key]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__resp_key]  DEFAULT ('') FOR [resp_key]
+END
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_wafgfe__resp_txt]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[wafgfe__] ADD  CONSTRAINT [DF_wafgfe__resp_txt]  DEFAULT ('') FOR [resp_txt]
+END
+

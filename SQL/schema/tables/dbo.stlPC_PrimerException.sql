@@ -1,0 +1,14 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlPC_PrimerException]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlPC_PrimerException](
+	[stlPC_PrimerExceptionID] [int] IDENTITY(1,1) NOT NULL,
+	[ink__ref] [nvarchar](6) COLLATE Latin1_General_CI_AS NOT NULL,
+	[art__ref] [nvarchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlPC_PrimerException] PRIMARY KEY CLUSTERED 
+(
+	[stlPC_PrimerExceptionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END

@@ -1,0 +1,18 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlPP_NumPerStyle]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlPP_NumPerStyle](
+	[stlPP_NumPerStyleID] [int] IDENTITY(1,1) NOT NULL,
+	[numPerStyle] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlPP_NumPerStyle] PRIMARY KEY CLUSTERED 
+(
+	[stlPP_NumPerStyleID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_stlPP_NumPerStyle_numPerStyle]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[stlPP_NumPerStyle] ADD  CONSTRAINT [DF_stlPP_NumPerStyle_numPerStyle]  DEFAULT ('') FOR [numPerStyle]
+END
+

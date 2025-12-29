@@ -1,0 +1,26 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlTBC_IDIUploades]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlTBC_IDIUploades](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ImportFileName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[UploadedToIDI] [datetime] NULL,
+ CONSTRAINT [PK_stlTBC_IDIUploades] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+SET ANSI_PADDING ON
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[stlTBC_IDIUploades]') AND name = N'IX_stlTBC_IDIUploadesImportFileName')
+CREATE UNIQUE NONCLUSTERED INDEX [IX_stlTBC_IDIUploadesImportFileName] ON [dbo].[stlTBC_IDIUploades]
+(
+	[ImportFileName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_stlTBC_IDIUploades_stlTBC_IDIUploades]') AND parent_object_id = OBJECT_ID(N'[dbo].[stlTBC_IDIUploades]'))
+ALTER TABLE [dbo].[stlTBC_IDIUploades]  WITH CHECK ADD  CONSTRAINT [FK_stlTBC_IDIUploades_stlTBC_IDIUploades] FOREIGN KEY([ID])
+REFERENCES [dbo].[stlTBC_IDIUploades] ([ID])
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_stlTBC_IDIUploades_stlTBC_IDIUploades]') AND parent_object_id = OBJECT_ID(N'[dbo].[stlTBC_IDIUploades]'))
+ALTER TABLE [dbo].[stlTBC_IDIUploades] CHECK CONSTRAINT [FK_stlTBC_IDIUploades_stlTBC_IDIUploades]

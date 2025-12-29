@@ -1,0 +1,14 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[stlReplacedMaterials]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[stlReplacedMaterials](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[replaced_art__ref] [nvarchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
+	[new_art__ref] [nvarchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_stlReplacedMaterials] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END

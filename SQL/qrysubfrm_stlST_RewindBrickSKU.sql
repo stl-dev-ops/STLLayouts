@@ -1,0 +1,4 @@
+SELECT dbo_stlST_RewindBrickSKU.stlST_RewindBrickSKUID, dbo_stlST_RewindBrickSKU.stlST_RewindBrickID, dbo_stlST_RewindBrickSKU.sku__ref, dbo_afgsku__.volgnr__
+FROM dbo_stlST_RewindBrickSKU INNER JOIN dbo_afgsku__ ON dbo_stlST_RewindBrickSKU.sku__ref = dbo_afgsku__.sku__ref
+ORDER BY dbo_stlST_RewindBrickSKU.stlST_RewindBrickSKUID;
+

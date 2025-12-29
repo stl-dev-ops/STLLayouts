@@ -1,0 +1,3 @@
+SELECT spoolJob.ord__ref AS JobNo, pressRollSKU.hlf__ref AS PressRollSFG, dbo_hlfvrd__.inh__oms AS PRDesc, brick.sku__ref AS RewindSFG, flatRoll.flatRollNo, spool.spoolNo, spool.sku__ref AS SpoolFG, spool.Qty
+FROM flatRoll INNER JOIN (((spoolJob INNER JOIN ((qryBricksInSpool INNER JOIN (spool INNER JOIN flatRollSpool ON spool.spoolID = flatRollSpool.spoolID) ON qryBricksInSpool.brickID = flatRollSpool.brickID) INNER JOIN brick ON flatRollSpool.brickID = brick.brickID) ON spoolJob.spoolJobID = brick.spoolJobID) INNER JOIN pressRollSKU ON brick.brickID = pressRollSKU.brickID) INNER JOIN dbo_hlfvrd__ ON pressRollSKU.hlf__ref = dbo_hlfvrd__.hlf__ref) ON flatRoll.flatRollID = flatRollSpool.flatRollID;
+

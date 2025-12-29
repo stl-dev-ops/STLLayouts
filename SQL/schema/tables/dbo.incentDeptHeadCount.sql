@@ -1,0 +1,14 @@
+﻿SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[incentDeptHeadCount]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[incentDeptHeadCount](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[department] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[headCount] [float] NOT NULL,
+ CONSTRAINT [PK_incentDeptHeadCount] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END

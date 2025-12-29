@@ -1,0 +1,4 @@
+SELECT dbo_stlST_pressRollBadRow.stlST_pressRollBadRowID, dbo_stlST_pressRollBadRow.stlST_RewindBrickID, dbo_stlST_pressRollBadRow.flatRollNo, dbo_stlST_pressRollBadRow.lastModified
+FROM dbo_stlST_pressRollBadRow
+ORDER BY dbo_stlST_pressRollBadRow.flatRollNo;
+
