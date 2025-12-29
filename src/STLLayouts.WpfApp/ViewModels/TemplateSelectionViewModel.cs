@@ -17,6 +17,8 @@ public class TemplateSelectionViewModel : ViewModelBase
     private readonly ITemplateService _templateService;
     private readonly ILogger<TemplateSelectionViewModel> _logger;
 
+    private readonly AsyncRelayCommand _deleteTemplateCommand;
+
     private Template? _selectedTemplate;
     private string _selectedCategory = "All";
     private bool _isLoading;
@@ -40,6 +42,8 @@ public class TemplateSelectionViewModel : ViewModelBase
         UploadTemplateCommand = new AsyncRelayCommand(async _ => await UploadTemplateAsync());
         ManageRulesCommand = new AsyncRelayCommand(async _ => await ManageRulesAsync());
 
+        _deleteTemplateCommand = new AsyncRelayCommand(async _ => await DeleteSelectedTemplateAsync(), _ => SelectedTemplate != null);
+
         // Auto-load templates on construction so the list is always fresh without clicking Load.
         if (!_autoLoadStarted)
         {
@@ -54,7 +58,13 @@ public class TemplateSelectionViewModel : ViewModelBase
     public Template? SelectedTemplate
     {
         get => _selectedTemplate;
-        set => SetProperty(ref _selectedTemplate, value);
+        set
+        {
+            if (SetProperty(ref _selectedTemplate, value))
+            {
+                _deleteTemplateCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 
     public string SelectedCategory
@@ -97,6 +107,7 @@ public class TemplateSelectionViewModel : ViewModelBase
     public ICommand RefreshCommand { get; }
     public ICommand UploadTemplateCommand { get; }
     public ICommand ManageRulesCommand { get; }
+    public ICommand DeleteTemplateCommand => _deleteTemplateCommand;
 
     private bool _autoLoadStarted;
 
@@ -263,6 +274,67 @@ public class TemplateSelectionViewModel : ViewModelBase
         {
             _logger.LogError(ex, "Failed to upload/register template");
             StatusMessage = $"Upload failed: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteSelectedTemplateAsync()
+    {
+        if (SelectedTemplate == null)
+        {
+            StatusMessage = "Select a template to delete";
+            return;
+        }
+
+        var templateToDelete = SelectedTemplate;
+
+        var result = System.Windows.MessageBox.Show(
+            $"Delete template '{templateToDelete.TemplateName}'?",
+            "Confirm delete",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Warning);
+
+        if (result != System.Windows.MessageBoxResult.Yes)
+        {
+            StatusMessage = "Delete cancelled";
+            return;
+        }
+
+        try
+        {
+            _logger.LogInformation("Deleting template {TemplateId} - {TemplateName}", templateToDelete.TemplateId, templateToDelete.TemplateName);
+
+            await _templateService.DeleteTemplateAsync(templateToDelete.TemplateId);
+
+            SelectedTemplate = null;
+            StatusMessage = $"Deleted template: {templateToDelete.TemplateName}";
+
+            await LoadTemplatesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete template {TemplateId}", templateToDelete.TemplateId);
+
+            var msg = ex.Message ?? string.Empty;
+            if (msg.Contains("FOREIGN KEY", StringComparison.OrdinalIgnoreCase) ||
+                msg.Contains("REFERENCE constraint", StringComparison.OrdinalIgnoreCase) ||
+                msg.Contains("The DELETE statement conflicted", StringComparison.OrdinalIgnoreCase) ||
+                msg.Contains("conflicted with the REFERENCE constraint", StringComparison.OrdinalIgnoreCase))
+            {
+                StatusMessage = "Delete failed: template is referenced by existing rules";
+                System.Windows.MessageBox.Show(
+                    "This template can't be deleted because it is referenced by one or more rules. Delete or reassign the rules first, then try again.",
+                    "Delete blocked",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+                return;
+            }
+
+            StatusMessage = $"Delete failed: {ex.Message}";
+            System.Windows.MessageBox.Show(
+                $"Failed to delete template: {ex.Message}",
+                "Delete failed",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
         }
     }
 

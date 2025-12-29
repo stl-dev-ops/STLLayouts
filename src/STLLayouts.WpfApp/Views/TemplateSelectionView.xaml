@@ -57,6 +57,8 @@
                     Padding="15,8" Margin="0,0,10,0"/>
             <Button Content="Manage Rules" Command="{Binding ManageRulesCommand}"
                 Padding="15,8" Margin="0,0,10,0"/>
+            <Button Content="Delete Template" Command="{Binding DeleteTemplateCommand}"
+                    Padding="15,8" Margin="0,0,10,0"/>
                 <Button Content="Load Templates" Command="{Binding LoadTemplatesCommand}" 
                     Padding="15,8" Margin="0,0,10,0" Visibility="Collapsed"/>
             <Button Content="Close" Width="80" Padding="15,8"/>

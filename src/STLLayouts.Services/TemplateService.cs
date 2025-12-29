@@ -40,16 +40,16 @@ public class TemplateService : ITemplateService
         return await _repository.GetTemplatesByCategoryAsync(category);
     }
 
-    public async Task<Template?> GetTemplateByIdAsync(int templateId)
+    public async Task<Template?> GetTemplateByIdAsync(Guid templateId)
     {
-        if (templateId <= 0)
+        if (templateId == Guid.Empty)
         {
             _logger.LogWarning("GetTemplateByIdAsync called with invalid templateId: {TemplateId}", templateId);
-            throw new ArgumentException("Template ID must be greater than 0", nameof(templateId));
+            throw new ArgumentException("Template ID must not be empty", nameof(templateId));
         }
 
         _logger.LogInformation("Retrieving template with ID: {TemplateId}", templateId);
-        return await _repository.GetByIdAsync(new Guid());
+        return await _repository.GetByIdAsync(templateId);
     }
 
     public async Task<Template> CreateTemplateAsync(Template template)
@@ -113,16 +113,16 @@ public class TemplateService : ITemplateService
         await _repository.UpdateAsync(template);
     }
 
-    public async Task DeleteTemplateAsync(int templateId)
+    public async Task DeleteTemplateAsync(Guid templateId)
     {
-        if (templateId <= 0)
+        if (templateId == Guid.Empty)
         {
             _logger.LogWarning("DeleteTemplateAsync called with invalid templateId: {TemplateId}", templateId);
-            throw new ArgumentException("Template ID must be greater than 0", nameof(templateId));
+            throw new ArgumentException("Template ID must not be empty", nameof(templateId));
         }
 
         _logger.LogInformation("Deleting template with ID: {TemplateId}", templateId);
-        await _repository.DeleteAsync(new Guid());
+        await _repository.DeleteAsync(templateId);
     }
 
     public async Task<List<string>> DetectVariablesInTemplateAsync(string templateFilePath)
@@ -156,12 +156,12 @@ public class TemplateService : ITemplateService
         }
     }
 
-    public async Task<TemplateVersion> CreateVersionAsync(int templateId, string filePath, string comment)
+    public async Task<TemplateVersion> CreateVersionAsync(Guid templateId, string filePath, string comment)
     {
-        if (templateId <= 0)
+        if (templateId == Guid.Empty)
         {
             _logger.LogWarning("CreateVersionAsync called with invalid templateId: {TemplateId}", templateId);
-            throw new ArgumentException("Template ID must be greater than 0", nameof(templateId));
+            throw new ArgumentException("Template ID must not be empty", nameof(templateId));
         }
 
         if (string.IsNullOrWhiteSpace(filePath))
@@ -181,7 +181,7 @@ public class TemplateService : ITemplateService
         var version = new TemplateVersion
         {
             TemplateVersionId = Guid.NewGuid(),
-            TemplateId = new Guid(),
+            TemplateId = templateId,
             VersionNumber = 1,
             FilePath = filePath,
             ChangedDate = DateTime.UtcNow,

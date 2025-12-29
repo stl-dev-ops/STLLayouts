@@ -86,6 +86,30 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "Convert PDF To Word",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/convert-pdf-to-word.ps1",
+				"-InputPdf",
+				"${input:InputPdf}",
+				"-OutputDir",
+				"${input:OutputDir}"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "Build Solution",
 			"type": "shell",
 			"command": "powershell",
@@ -768,6 +792,11 @@
 			"id": "InputFile",
 			"type": "promptString",
 			"description": "Generated file to convert to PDF"
+		},
+		{
+			"id": "InputPdf",
+			"type": "promptString",
+			"description": "PDF file to convert to Word (.docx)"
 		},
 		{
 			"id": "OutputDir",
