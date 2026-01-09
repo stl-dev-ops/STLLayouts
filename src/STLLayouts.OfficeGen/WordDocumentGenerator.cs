@@ -279,7 +279,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
             var remaining = combined.Length - idx;
             if (i == texts.Count - 1)
             {
-                texts[i].Text = remaining > 0 ? combined.Substring(idx) : string.Empty;
+                texts[i].Text = remaining > 0 ? new string(combined.AsSpan(idx)) : string.Empty;
                 idx = combined.Length;
                 continue;
             }
@@ -291,7 +291,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
             }
 
             var take = Math.Min(originalLen, remaining);
-            texts[i].Text = combined.Substring(idx, take);
+            texts[i].Text = new string(combined.AsSpan(idx, take));
             idx += take;
         }
     }
