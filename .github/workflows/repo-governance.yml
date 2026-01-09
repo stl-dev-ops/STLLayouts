@@ -1,0 +1,67 @@
+name: Repo Governance
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block tracked temp/log artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Checking for forbidden tracked paths..."
+
+          forbidden=$(git ls-files \
+            | grep -E '^(temp/|logs/)' \
+            | grep -v '^logs/\.gitkeep$' \
+            || true)
+
+          if [[ -n "$forbidden" ]]; then
+            echo "ERROR: Forbidden tracked files detected. Remove these from git and add to .gitignore:" >&2
+            echo "$forbidden" >&2
+            exit 1
+          fi
+
+          echo "OK: no forbidden tracked temp/ or logs/ files (except logs/.gitkeep)."
+
+      - name: Verify .gitignore contains artifact rules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_patterns=(
+            '^temp/$'
+            '^logs/\*$'
+            '^!logs/\.gitkeep$'
+            '^\*\.err$'
+            '^~\$\*\.docx$'
+            '^~\$\*\.xlsx$'
+          )
+
+          missing=0
+          for pat in "${required_patterns[@]}"; do
+            if ! grep -Eq "$pat" .gitignore; then
+              echo "ERROR: .gitignore missing required pattern: $pat" >&2
+              missing=1
+            fi
+          done
+
+          if [[ $missing -ne 0 ]]; then
+            exit 1
+          fi
+
+          echo "OK: .gitignore contains required artifact rules."
