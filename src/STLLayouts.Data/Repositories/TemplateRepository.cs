@@ -4,12 +4,8 @@ using STLLayouts.Core.Interfaces;
 
 namespace STLLayouts.Data.Repositories;
 
-public class TemplateRepository : Repository<Template>, ITemplateRepository
+public class TemplateRepository(ApplicationDbContext context) : Repository<Template>(context), ITemplateRepository
 {
-    public TemplateRepository(ApplicationDbContext context) : base(context)
-    {
-    }
-
     public async Task<List<Template>> GetActiveTemplatesAsync()
     {
         return await _dbSet

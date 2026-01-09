@@ -405,7 +405,7 @@ public class VariableMappingService(
     /// Supports nested properties (e.g., "Address.City").
     /// Automatically strips database table prefixes (e.g., "dbo.order___.leverdat" -> "leverdat").
     /// </summary>
-    private object? GetJobPropertyValue(Job job, string propertyPath)
+    private static object? GetJobPropertyValue(Job job, string propertyPath)
     {
         if (string.IsNullOrWhiteSpace(propertyPath))
             return null;

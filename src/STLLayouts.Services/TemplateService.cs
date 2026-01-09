@@ -5,16 +5,10 @@ using STLLayouts.Core.Interfaces;
 
 namespace STLLayouts.Services;
 
-public class TemplateService : ITemplateService
+public partial class TemplateService(ITemplateRepository repository, ILogger<TemplateService> logger) : ITemplateService
 {
-    private readonly ITemplateRepository _repository;
-    private readonly ILogger<TemplateService> _logger;
-
-    public TemplateService(ITemplateRepository repository, ILogger<TemplateService> logger)
-    {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ITemplateRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<List<Template>> GetAllTemplatesAsync()
     {
@@ -63,7 +57,7 @@ public class TemplateService : ITemplateService
         if (string.IsNullOrWhiteSpace(template.TemplateName))
         {
             _logger.LogWarning("CreateTemplateAsync called with empty template name");
-            throw new ArgumentException("Template name cannot be null or empty", nameof(template.TemplateName));
+            throw new ArgumentException("Template name cannot be null or empty", nameof(template));
         }
 
         // TemplateName is unique (see EF model). Provide a friendly error instead of relying on DB constraint.
@@ -77,7 +71,7 @@ public class TemplateService : ITemplateService
         if (string.IsNullOrWhiteSpace(template.FilePath))
         {
             _logger.LogWarning("CreateTemplateAsync called with empty file path");
-            throw new ArgumentException("File path cannot be null or empty", nameof(template.FilePath));
+            throw new ArgumentException("File path cannot be null or empty", nameof(template));
         }
 
         if (!File.Exists(template.FilePath))
@@ -112,7 +106,7 @@ public class TemplateService : ITemplateService
         if (string.IsNullOrWhiteSpace(template.TemplateName))
         {
             _logger.LogWarning("UpdateTemplateAsync called with empty template name");
-            throw new ArgumentException("Template name cannot be null or empty", nameof(template.TemplateName));
+            throw new ArgumentException("Template name cannot be null or empty", nameof(template));
         }
 
         _logger.LogInformation("Updating template: {TemplateId}", template.TemplateId);
@@ -204,31 +198,34 @@ public class TemplateService : ITemplateService
     /// Extracts variable placeholders from template content.
     /// Supports formats: {{VariableName}}, ${VariableName}, {VariableName}
     /// </summary>
-    private List<string> ExtractVariables(string content)
+    private static List<string> ExtractVariables(string content)
     {
         var variables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        // Pattern for {{VariableName}} format (Mustache-style)
-        var pattern1 = new Regex(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}", RegexOptions.Compiled);
-        foreach (Match match in pattern1.Matches(content))
+        foreach (Match match in MustacheVarRegex().Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
 
-        // Pattern for ${VariableName} format (Template Literal style)
-        var pattern2 = new Regex(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}", RegexOptions.Compiled);
-        foreach (Match match in pattern2.Matches(content))
+        foreach (Match match in TemplateLiteralVarRegex().Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
 
-        // Pattern for {VariableName} format (Simple style, but avoid C# format specifiers)
-        var pattern3 = new Regex(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)", RegexOptions.Compiled);
-        foreach (Match match in pattern3.Matches(content))
+        foreach (Match match in SimpleBraceVarRegex().Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
 
-        return variables.OrderBy(v => v).ToList();
+        return [.. variables.OrderBy(v => v)];
     }
+    
+    [GeneratedRegex(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}")]
+    private static partial Regex MustacheVarRegex();
+
+    [GeneratedRegex(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}")]
+    private static partial Regex TemplateLiteralVarRegex();
+
+    [GeneratedRegex(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)")]
+    private static partial Regex SimpleBraceVarRegex();
 }

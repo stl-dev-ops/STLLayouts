@@ -8,14 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace STLLayouts.OfficeGen;
 
-public sealed class WordDocumentGenerator : IDocumentGenerator
+public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger) : IDocumentGenerator
 {
-    private readonly ILogger<WordDocumentGenerator> _logger;
-
-    public WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<WordDocumentGenerator> _logger = logger;
 
     public bool SupportsFormat(string fileExtension)
         => string.Equals(fileExtension, ".docx", StringComparison.OrdinalIgnoreCase);
@@ -212,20 +207,21 @@ public sealed class WordDocumentGenerator : IDocumentGenerator
         // (so run formatting remains stable).
 
         // Build a working buffer of the concatenated text and map absolute indices to nodes.
-        var nodeStarts = new int[texts.Count];
         var totalLen = 0;
         for (var i = 0; i < texts.Count; i++)
         {
-            nodeStarts[i] = totalLen;
             totalLen += texts[i].Text?.Length ?? 0;
         }
 
-        if (totalLen == 0) return;
+        if (totalLen == 0)
+        {
+            return;
+        }
 
         var combined = string.Concat(texts.Select(t => t.Text ?? string.Empty));
         var changed = false;
 
-        int FindNext(string haystack, string needle, int start)
+        static int FindNext(string haystack, string needle, int start)
             => haystack.IndexOf(needle, start, StringComparison.Ordinal);
 
         // Iterate over tokens; update `combined` as we go.
@@ -250,7 +246,11 @@ public sealed class WordDocumentGenerator : IDocumentGenerator
 
             if (!string.Equals(token, replaced, StringComparison.Ordinal))
             {
-                combined = combined.Substring(0, start) + replaced + combined.Substring(end + 2);
+                // Avoid substring + concatenation allocations.
+                combined = string.Concat(
+                    combined.AsSpan(0, start),
+                    replaced.AsSpan(),
+                    combined.AsSpan(end + 2));
                 changed = true;
                 scanIndex = start + (replaced?.Length ?? 0);
             }
