@@ -1,180 +1,0 @@
-q��$	�-90Q�CommonStates��.Determinate��Indeterminate��.��$rForever��$
-�True��.��T�$00:00:00D�$IndeterminateRoot��$(UIElement.Visibility)�..�i�$p00:00:00��q*Visible=�T�$00:00:00D�$DeterminateRoot��$(UIElement.Visibility)�..�i�$p00:00:00��q*	Collapsed=�T�$ellipse1��$
-Visibility�..�i�$p0:0:0��q*Visible=�T�$ellipse2��$
-Visibility�..�i�$p0:0:0��q*Visible=�T�$ellipse3��$
-Visibility�..�i�$p0:0:0��q*Visible=�T�$ellipse4��$
-Visibility�..�i�$p0:0:0��q*Visible=�T�$ProgressBarTrack��$
-Visibility�..�i�$p0:0:0��q*	Collapsed=�U�$UO(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)�$ellipse4��.\�$60��$50Q�7$EaseIn=�$2Q�$60:0:0.5��$	5100Q�$60:0:1��$	5102Q�7$EaseIn=�$2Q�$60:0:1.6��$	5174Q�U�$(UIElement.Opacity)�$ellipse4��.\�$60��$50Q�7$EaseIn=�$2Q�$60:0:0.5��$51Q�$60:0:1��$51Q�7$EaseIn=�$2Q�$60:0:1.6��$50Q�U�$(UIElement.Opacity)�$ellipse3��.\�$60��$50Q�$60:0:0.2��$50Q�7$EaseIn=�$2Q�$60:0:0.7��$51Q�$60:0:1.2��$51Q�7$EaseIn=�$2Q�$60:0:1.8��$50Q�U�$(UIElement.Opacity)�$ellipse2��.\�$60��$50Q�$60:0:0.4��$50Q�7$EaseIn=�$2Q�$60:0:0.9��$51Q�$60:0:1.4��$51Q�7$EaseIn=�$2Q�$60:0:2��$50Q�U�$(UIElement.Opacity)�$ellipse1��.\�$60��$50Q�$60:0:0.6��$50Q�7$EaseIn=�$2Q�$60:0:1.1��$51Q�$60:0:1.6��$51Q�7$EaseIn=�$2Q�$60:0:2.2��$50Q�U�$UO(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)�$ellipse3��.\�$60:0:0.2��$50Q�7$EaseIn=�$2Q�$60:0:0.7��$590Q�$60:0:1.2��$592Q�7$EaseIn=�$2Q�$60:0:1.8��$	5174Q�U�$UO(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)�$ellipse2��.\�$60:0:0.4��$50Q�7$EaseIn=�$2Q�$60:0:0.9��$580Q�$60:0:1.4��$582Q�7$EaseIn=�$2Q�$60:0:2��$	5174Q�U�$UO(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)�$ellipse1��.\�$60:0:0.6��$50Q�7$EaseIn=�$2Q�$60:0:1.1��$570Q�$60:0:1.6��$572Q�7$EaseIn=�$2Q�$60:0:2.2��$	5174Q�.+�5$�transformationRoot��.���$
-Root��[��$
-�row0����$
-�row1��$
-��Auto�.+��$ProgressBarGrid��#��z��.+���$CProgressBarTrack��#��z��#��z��#��z���$ProgressBarRootGrid��.+��$IndeterminateRoot��$	��180��.+�A�$9ellipse4��$��8��$��8��$0.5,0.5&�$
-��Left=�$y�	Collapsed=���$AccentBrushz�V�.~�T�A�$9ellipse3��$��8��$��8��$0.5,0.5&�$
-��Left=�$y�	Collapsed=���$AccentBrushz�V�.~�T�A�$9ellipse2��$��8��$��8��$0.5,0.5&�$
-��Left=�$y�	Collapsed=���$AccentBrushz�V�.~�T�A�$9ellipse1��$��8��$��8��$0.5,0.5&�$
-��Left=�$y�	Collapsed=���$AccentBrushz�V�.~�T��$DeterminateRoot��$
-True��k��$
-��Auto���$
-��Auto���$��*�.+���$uSkipValueSpacer��
-������$��0��$��1����$uProgressBarIndicator��$
-��Left=�#��z��#��z��$��1����$SContentPresenter��$��1��$��Content��$�Content��#��z��#��z�#��z��#��z��GP�H���$	ITop=�.���$
-Jrow0��'���$
-(Auto���$
-Jrow1��'���$(*���$JProgressBarGrid��'���$(1����$JContentPresenter��'���$(0��P�H���$ICenter=�.���$JContentPresenter��'���$(0����"&)8+��"&8.���'�}�$
-(true����'���$(Stretch=���'���$(Stretch=���'�@8
-Transition(9$
-�0.02Q�$	�0.3Q�$	�0.5Q���'���(��"8.R��.+�:$�PART_RootElement��.+���$��1q����	#01000000$�0Q�$�0Q���$uOldContentPresenter��$8False��#��z��#��z��$�0Q�$�0Q�$0Q�����*OldVisualWidth+$$PART_ContentPresenter������*OldVisualHeight+$$PART_ContentPresenter������*OldVisualBrush+$$PART_ContentPresenter��;$�PART_ContentPresenter��#�z��#�z��#�z�#��z��#��z��#��z��#�z�#�z�#�z�$�1Q�$�1Q����$$PART_RootElement�����$$OldContentPresenter����"&88+��"&5.���'���(��"5.R��$
-RootVisual��#��z��.+���$SContentPresenter��#��z��#��z����"&58+��"&��8+.���'�@<TextRenderingMode$(	ClearType=���'�@�Cursor$
-(Hand����'���$
-(True����'�@�FocusVisualStyle(Z���'���($	IconBrush��'���
-(������'���
-(������'�@J�SnapsToDevicePixels$
-(True����'�@�UseLayoutRounding$(False����'���$(1q���'���$(16����'���$(16����'���$(0q���"&��8+.���'���$(4 0 0 0q���'���(��.R�8h��"&��8+.���'���$(0 0 4 0q���'���(��.R�8h��"&n�.���'���$
-(True����'���$(0q���'�@CornerRadius$(4����'���$(8����'���$(18����'���($AccentBrush��'���($AccentBrush��'�@J�SnapsToDevicePixels$
-(True����'�|�$
-(True����'�@�FocusVisualStyle(Z���'���(��"n�.R���$CBorderVisual��#��z��#zO#��z��#��z��GP�H�@J�	IsFocused$
-ITrue��.���$JBorderVisual��($AccentFocusedBrush'�����$JBorderVisual��($AccentFocusedBrush'���P�H�@J�IsMouseOver$
-ITrue��.���$JBorderVisual��($AccentMouseOverBrush'�����$JBorderVisual��($AccentMouseOverBrush'���P�H�@n�
-IsDragging$
-ITrue��.���$JBorderVisual��($AccentPressedBrush'�����$JBorderVisual��($AccentPressedBrush'���P�H�{�$IFalse��.���$JBorderVisual��($ComplementaryBrush'�����$JBorderVisual��($ComplementaryBrush'�����"&n�.���'���$(2����'���($AccentBrush��'���$(0q���'���($AccentBrush��'�@J�SnapsToDevicePixels$
-(True����'���$
-(True����'�|�$
-(True����'�@�FocusVisualStyle(Z���'���(��"n�.R��.+���$CBorderVisual��#��z��#��z��#��z��GP�H�@J�	IsFocused$
-ITrue��.���$JBorderVisual��($AccentFocusedBrush'�����$JBorderVisual��($AccentFocusedBrush'���P�H�@J�IsMouseOver$
-ITrue��.���$JBorderVisual��($AccentMouseOverBrush'�����$JBorderVisual��($AccentMouseOverBrush'�����'�@�Cursor$
-(Hand��P�H�@n�
-IsDragging$
-ITrue��.���$JBorderVisual��($AccentPressedBrush'�����$JBorderVisual��($AccentPressedBrush'���P�H�{�$IFalse��.���$JBorderVisual��($ComplementaryBrush'�����$JBorderVisual��($ComplementaryBrush'�����.R���$��1��$��3������$	IconBrush��"&=.���'���($MarkerBrush��'���$(False����'���(��.R�>
-��������"&��.���'���$(2����'���$
-(True����'�@�FocusVisualStyle(Z���'���(��"��.R���#��z��#��z��#��z����"&��.���'���$(False����'���(��"��.R��
-��������.R���$��Center=�$��Center=�����*.+$�F2����"&?.���'���($
-FontFamily��'���($FontSize��'���($PressedBrush��'�@?TickTemplate8(��'�@?
-ThumbStyle8(��'�@?AlternateThumbStyle8(��!'�@?SelectionMiddleThumbStyle8(��'�@?TickBarStyle8(��'�@?
-TrackStyle8(��'�@?IncreaseHandleStyle8(��'�@?DecreaseHandleStyle8(��"'�@?AutoToolTipContentTemplate8(��'���$(False����'���(��"?.R�5$�layoutControl��$
-.5 0&��V�.~�������T�CommonStates��.
-Normal��OrientationStates��.
-Horizontal��.��.��T�$layoutControl��$LayoutTransform�..�i�$p0��q��$�0Q�Vertical��.��.��T�$layoutControl��$LayoutTransform�..�i�$p0��q��$	�-90Q�ReversedHorizontal��.��.��T�$layoutControl��$LayoutTransform�..�i�$p0��q��$@-1Q�T�$BottomTickBar��$RenderTransform�..�i�$p0��q��$@-1Q�T�$
-TopTickBar��$RenderTransform�..�i�$p0��q��$@-1Q�ReversedVertical��.��.��T�$layoutControl��$LayoutTransform�..�i�$p0��qV�.~���$A-1Q���$�90Q�T�$BottomTickBar��$RenderTransform�..�i�$p0��qV�.~���$A-1Q���$
-�-180Q�T�$
-TopTickBar��$RenderTransform�..�i�$p0��qV�.~���$A-1Q���$
-�-180Q�RangeStates��.SingleThumb��RangeThumbs��.��.��T�$
-ThumbsHost��$
-Visibility�..�i�$p0��q*	Collapsed=�ActiveThumb��.MultiRangeInactiveThumb��.��.����$DecreaseButton��$(IsEnabled)�.p�s�$�0��$�False����$IncreaseButton��$(IsEnabled)�.p�s�$�0��$�False��MultiRangeActiveThumb��.��.����$DecreaseButton��$(IsEnabled)�.p�s�$�0��$
-�True����$IncreaseButton��$(IsEnabled)�.p�s�$�0��$
-�True��MultipleRanges��.MultipleRangeThumbs��.��.��T�$
-ThumbsHost��$
-Visibility�..�i�$p0��q*Visible=�T�$RangeThumbsPanel��$
-Visibility�..�i�$p0��q*	Collapsed=�T�$SingleThumbHost��$
-Visibility�..�i�$p0��q*	Collapsed=�T�$LargeIncreaseButton��$
-Visibility�..�i�$p0��q*	Collapsed=�T�$LargeDecreaseButton��$
-Visibility�..�i�$p0��q*	Collapsed=�.���$
-True��k��$
-��Auto���$
-��Auto���$
-��Auto���$��*���$
-��Auto�[��$
-��Auto���$
-��Auto���$
-��Auto�.+�=$�
-TopTickBar��$��1��$��3��#��z�#��z�#��z�#�z�#�z�#�z�#��z�$0.5,0.5&�$|Top Tick Bar��z�V�.~�������T���$\Track��#��z�$��1��$��3��$��1��$��Center=�#��z����$�DecreaseButton��$��1��#�z�#�z�#y�z�#��z���$�LargeDecreaseButton��$��1��$��1��8��	#�z�#�z��$��1��$��2��$��Center=�.+�n�$�SingleThumbHost��#��z�#y�z���$�RangeThumbsPanel��$!
-Horizontal=�$y�	Collapsed=�.+�n�$�RangeStartThumb��#��z�#y�z�n�$�RangeMiddleThumb��#��z�n�$�RangeEndThumb��#��z�#y�z�@$�
-ThumbsHost��$��1��$��1��$��3��$y�	Collapsed=�$��Center=�#�z�#�z�$|Thumbs Host������*Thumbs+��Ztelerik1:RadSlider���*ActiveThumb+��*TemplatedParent+$)TwoWay=���$�LargeIncreaseButton��$��3��$��1��8��
-#�z�#�z���$�IncreaseButton��$��1��$��4��#�z�#�z�#y�z�$0.5,0.5&�#��z�=$�BottomTickBar��$��2��$��1��$��3��#�z�#�z�#��z�#��z�#��z�#�z�#��z�$0.5,0.5&�$|Bottom Tick Bar��z�V�.~�������T�GP�H�@AIsSelectionRangeEnabled$
-ITrue��.���$JSingleThumbHost��'�y�$(	Collapsed=���$JRangeThumbsPanel��'�y�$(Visible=�P�H�@?TickPlacement$
-INone=�.���$J
-TopTickBar��'�y�$(	Collapsed=���$JBottomTickBar��'�y�$(	Collapsed=�P�H�@?TickPlacement$
-IBoth=�.���$J
-TopTickBar��'�y�$(Visible=���$JBottomTickBar��'�y�$(Visible=�P�H�@?TickPlacement$IBottomRight=�.���$J
-TopTickBar��'�y�$(	Collapsed=���$JBottomTickBar��'�y�$(Visible=�P�H�@?TickPlacement$ITopLeft=�.���$J
-TopTickBar��'�y�$(Visible=���$JBottomTickBar��'�y�$(	Collapsed=���"&@.���'���(��.R�B$�PART_ThumbPanel��$
-�True����'���(��"@.R��#��z��.+���$�PART_ItemsPresenter��$��Center=���"&C.���'���$(False����'���(��"C.R���$!
-Horizontal=�.+�D$�
-StartThumb��#��z�#�z�y���*ThumbVisibility+��Ztelerik1:RadSlider���*
-RangeStart+��*TemplatedParent+$)TwoWay=�n�$�MiddleThumb��#��z�D$�EndThumb��#�z�#��z�y���*ThumbVisibility+��Ztelerik1:RadSlider���*
-RangeEnd+��*TemplatedParent+$)TwoWay=���'�@E
-ThumbStyle(����*FindAncestor+"Z?$ 
-ThumbStyle���'�@CAlternateThumbStyle(����*FindAncestor+"Z?$ AlternateThumbStyle���'�@CMiddleThumbStyle(����*FindAncestor+"Z?$ SelectionMiddleThumbStyle���"&D8+��"&C8+��"&@8+��"&=8+��"&?8+��"&F.���'�@CornerRadius($CornerRadius��'�@MouseOverBrush($MouseOverBrush��'�@PressedBrush($PressedBrush��'�@
-FocusBrush($AccentFocusedBrush��'���($
-FontFamily��'���($FontSize��'���($MarkerBrush��'���($	MainBrush��'���($	MainBrush��'���$(1q���'���$(5q���'�@J�SnapsToDevicePixels$
-(True����'�@�UseLayoutRounding$
-(True����'�@�FocusVisualStyle(Z���'���$(Center=���'���$(Center=���'���(��"F.R��.+���$CBorderVisual��#z#��z��#��z��#��z��#zO��$CFocusVisual��#z$y�	Collapsed=�$8False��#��zP#zO��$FocusThickness#DzO#z#��z��$��Stretch=�$��Stretch=�.F��$SContent��#��z��#��z��$
-��True��$|�False��#��z��#��z��#��z��#UzT#��z��#��z��G]�V��W�@FIsBackgroundVisible$XFalse����W�{�$
-XTrue����W�@J�IsMouseOver$XFalse��./���'���
-(������'���
-(����]�V��W�{�$
-XTrue����W�@J�IsKeyboardFocused$
-XTrue����W���$XFalse����W�@J�IsMouseOver$XFalse��./���$JFocusVisual��'�y�$(Visible=�P�H�@J�IsMouseOver$
-ITrue��.���$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'���P�H���$
-ITrue��.���$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'���P�H�{�$IFalse��.���$JContent��($DisabledOpacity'�@J�Opacity��($AlternativeBrush'�����($AlternativeBrush'���]�V��W�{�$XFalse����W�@J�	IsFocused$
-XTrue��./���$JFocusVisual��'�y�$(	Collapsed=�]�V��W�{�$XFalse����W�@FIsBackgroundVisible$XFalse��./���'���
-(������'���
-(������"&F8+��"G.R���$CPART_Background��#��z��#��z��#��z��#z�._���#��z��#��z����$�PART_Hyperlink��#�z��$|HyperlinkElement��#�z��#��z��#��z��$
-�Hand��#�z�#��z�#��z���Z�.�.���$SContentPresenter��#��z��#��z��#��z��#UzTGP�$�PART_Hyperlink��H�@��IsMouseOver$
-ITrue��.���$JPART_Hyperlink��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'�����$JPART_Hyperlink��'�@��TextDecorations$(	Underline{�P�H�@G	IsVisited$
-ITrue��.���$JPART_Hyperlink��(����*TemplatedParent+$ VisitedForeground�'�����$JPART_Hyperlink��'�@��TextDecorations$(	Underline{�]�V��$�PART_Hyperlink��W�@��IsMouseOver$
-XTrue����W�@G	IsVisited$
-XTrue��./���$JPART_Hyperlink��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'���P�H�{�$IFalse��.���($MarkerBrush'�����$JContentPresenter��($DisabledOpacity'�@J�OpacityP�H�@FIsBackgroundVisible$IFalse��.���$JPART_Background��'���
-(������"&G.���'�@MouseOverBrush8(��'���($
-FontFamily��'���($FontSize��'���8(��'�@GVisitedForeground8(��'���$(Center=���'���8(��"&G8+��"&F�.���'���($	IconBrush��'�@��Stretch$
-(Fill=���'���$(Center=���'���$(Center=���'�@J�SnapsToDevicePixels$
-(True����"&H.���'�@CornerRadius($CornerRadius��'�@MouseOverBrush($MouseOverBrush��'�@PressedBrush($PressedBrush��'�@
-FocusBrush($AccentFocusedBrush��'���($
-FontFamily��'���($FontSize��'���($MarkerBrush��'���($	MainBrush��'���($	MainBrush��'���$(1q���'���$(5q���'�@H	PathStyle8(��'�@�FocusVisualStyle(Z���'���$(Center=���'���$(Center=���'�@J�SnapsToDevicePixels$
-(True����'�@�UseLayoutRounding$
-(True����'���(��"H.R��.+���$CBorderVisual��#��z��#��z��#��z��#zO#z��$CFocusVisual��$y�	Collapsed=�$8False��#��zP#z#zO��$FocusThickness��Z�$
-RTrue��#z#��z��#DzO.F�#��z��k��$
-��Auto���$��*���$
-��Auto�[��$
-��Auto���$��*���$
-��Auto�.+�F�$
-�Path��$��1��$��1��#��z�#��z��$ContentHost��$��1��$��2��$��0 5 0 0q�.+���$SContent��#��z��#��z�#��z��#��z��#��z��#��z��#��z��#UzT$
-��True��G]�V��W�@FIsBackgroundVisible$XFalse����W�{�$
-XTrue����W�@J�IsMouseOver$XFalse����W�@J�	IsFocused$XFalse��./���'���
-(������'���
-(����]�V��W�{�$
-XTrue����W�@J�IsKeyboardFocused$
-XTrue����W���$XFalse����W�@J�IsMouseOver$XFalse��./���$JFocusVisual��'�y�$(Visible=�P�H�@J�IsMouseOver$
-Itrue��.���$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'���P�H���$
-ITrue��.���$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'���P�H�{�$IFalse��.���($AlternativeBrush'�����($AlternativeBrush'�����$
-JPath��($DisabledOpacity'�@J�Opacity��$JContent��($DisabledOpacity'�@J�Opacity]�V��W�{�$XFalse����W�@FIsBackgroundVisible$XFalse��./���'���
-(������'���
-(����]�V��XZ�W�����XZ�W���./���$JContentHost��'�y�$(	Collapsed=�P�H�@HContentPlacement$
-ILeft=�.���$JContentHost��'���$(0����$JContentHost��'���$(1����$JContentHost��'���$(0 0 5 0q�P�H�@HContentPlacement$IRight=�.���$JContentHost��'���$(2����$JContentHost��'���$(1����$JContentHost��'���$(5 0 0 0q�P�H�@HContentPlacement$	ITop=�.���$JContentHost��'���$(1����$JContentHost��'���$(0����$JContentHost��'���$(0 0 0 5q�]�V��W�@HContentPlacement$
-XLeft=���$
-�Path��W���$XRight=���$
-�Path��W�@��Stretch$
-XNone=�./���$
-JPath��'���$(2����$JContentHost��'���$(1��]�V��W�@HContentPlacement$XRight=���$
-�Path��W���$
-XLeft=���$
-�Path��W�@��Stretch$
-XNone=�./���$
-JPath��'���$(0����$JContentHost��'���$(1��]�V��W�@HContentPlacement$	XTop=���$
-�Path��W���$XBottom=���$
-�Path��W�@��Stretch$
-XNone=�./���$
-JPath��'���$(2����$JContentHost��'���$(1��]�V��W�@HContentPlacement$XBottom=���$
-�Path��W���$	XTop=���$
-�Path��W�@��Stretch$
-XNone=�./���$
-JPath��'���$(0����$JContentHost��'���$(1����"&H8+��"&3.���'�@CornerRadius($CornerRadius��'�@MouseOverBrush($MouseOverBrush��'�@PressedBrush($PressedBrush��'�@
-FocusBrush($AccentFocusedBrush��'�@CheckedBrush($AccentBrush��'���($
-FontFamily��'���($FontSize��'���($MarkerBrush��'���($	MainBrush��'���($	MainBrush��'���$(1q���'���$(5q���'�@J�SnapsToDevicePixels$
-(True����'���$(Center=���'���$(Center=���'�@�FocusVisualStyle(Z���'���(��"3.R��.+���$CBorderVisual��#z#��z��#��z��#��z��#zO��$CFocusVisual��#z$y�	Collapsed=�$8False��#��zP#zO��$FocusThickness��Z�#DzO#z#��z��$��Stretch=�$��Stretch=�$
-RTrue��.F��$SContent��#��z��#��z��#��z��#��z��#��z��#��z��#UzT$
-��True��G]�V��W�@3IsBackgroundVisible$XFalse����W�{�$
-XTrue����W�@J�IsMouseOver$XFalse����W�@d�	IsChecked$XFalseY�./���'���
-(������'���
-(����P�H�@d�	IsChecked$
-ITrueY�.���($AccentMouseOverBrush'�@MouseOverBrush��($AccentPressedBrush'�@PressedBrush��$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.CheckedBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.CheckedBrush)�$)OneWay=�'�����($MarkerInvertedBrush'���]�V��W�@J�IsKeyboardFocused$
-XTrue����W�@J�IsMouseOver$XFalse����W���$XFalse��./���$JFocusVisual��'�y�$(Visible=�P�H�@J�IsMouseOver$
-ITrue��.���$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$) #(mat:MaterialAssist.MouseOverBrush)�$)OneWay=�'���P�H���$
-ITrue��.���$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'�����$JBorderVisual��(����*TemplatedParent+$' !(mat:MaterialAssist.PressedBrush)�$)OneWay=�'���P�H�{�$IFalse��.���$JContent��($DisabledOpacity'�@J�Opacity��($AlternativeBrush'�����($AlternativeBrush'���]�V��W�{�$XFalse����W�@J�	IsFocused$
-XTrue��./���$JFocusVisual��'�y�$(	Collapsed=�]�V��W�{�$XFalse����W�@3IsBackgroundVisible$XFalse��./���'���
-(������'���
-(������"&38+��"&I.���'���$	(6 0q���'�@�FocusVisualStyle(Z���'���($FontSize��'���($
-FontFamily��'���($MarkerBrush��'���$(Center=���'���$
-(Left=���'���($AccentBrush��'���($AccentBrush��'���$(2q���'�@�Cursor$
-(Hand����'�@I
-TrackWidth$(60Q���'�@ITrackHeight$(22Q���'�@I
-ThumbWidth$(12Q���'�@IThumbHeight$(12Q���'�@IC

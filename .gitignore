@@ -94,6 +94,16 @@ $RECYCLE.BIN/
 # Logs directory (but keep the directory itself)
 logs/*
 !logs/.gitkeep
+*.err
+
+# Temp/local working data (should never be committed)
+temp/
+
+# Office autosave/lock files
+~$*.docx
+~$*.xlsx
+
+# NOTE: templates/*.docx are intentionally tracked (do not ignore)
 
 # Test results
 [Tt]est[Rr]esult*/

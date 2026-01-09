@@ -1,2 +1,0 @@
-[dbo].[stlLayouts_VariableMapping] (U ) Score=37
-  Columns: VariableMappingId, VariableName, DatabaseField, DataType, Category, DefaultValue, IsRequired, CreatedDate, SqlExpression, Description, CreatedBy
