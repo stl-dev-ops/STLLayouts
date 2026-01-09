@@ -10,6 +10,8 @@ namespace STLLayouts.OfficeGen;
 
 public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger) : IDocumentGenerator
 {
+    private delegate string TokenReplacer(string token);
+
     private readonly ILogger<WordDocumentGenerator> _logger = logger;
 
     public bool SupportsFormat(string fileExtension)
@@ -199,7 +201,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
     private static void ReplaceTokensAcrossTextNodes(
         IReadOnlyList<Text> texts,
-        Func<string, string> replaceInTokenText)
+        TokenReplacer replaceInTokenText)
     {
         // We look for any token start "{{" and token end "}}" across the concatenated stream of text.
         // When found, we replace the token substring using the provided replacer, then distribute the
