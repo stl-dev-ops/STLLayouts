@@ -10,6 +10,10 @@ public partial class TemplateService(ITemplateRepository repository, ILogger<Tem
     private readonly ITemplateRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+    private static readonly Regex MustacheRegex = new(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}", RegexOptions.Compiled);
+    private static readonly Regex TemplateLiteralRegex = new(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}", RegexOptions.Compiled);
+    private static readonly Regex SimpleBraceRegex = new(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)", RegexOptions.Compiled);
+
     public async Task<List<Template>> GetAllTemplatesAsync()
     {
         _logger.LogInformation("Retrieving all templates");
@@ -202,17 +206,17 @@ public partial class TemplateService(ITemplateRepository repository, ILogger<Tem
     {
         var variables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (Match match in MustacheVarRegex().Matches(content))
+        foreach (Match match in MustacheRegex.Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
 
-        foreach (Match match in TemplateLiteralVarRegex().Matches(content))
+        foreach (Match match in TemplateLiteralRegex.Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
 
-        foreach (Match match in SimpleBraceVarRegex().Matches(content))
+        foreach (Match match in SimpleBraceRegex.Matches(content))
         {
             variables.Add(match.Groups[1].Value);
         }
@@ -220,12 +224,5 @@ public partial class TemplateService(ITemplateRepository repository, ILogger<Tem
         return [.. variables.OrderBy(v => v)];
     }
     
-    [GeneratedRegex(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}")]
-    private static partial Regex MustacheVarRegex();
-
-    [GeneratedRegex(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}")]
-    private static partial Regex TemplateLiteralVarRegex();
-
-    [GeneratedRegex(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)")]
-    private static partial Regex SimpleBraceVarRegex();
+    // (GeneratedRegex was attempted here, but left as compiled Regex fields to avoid partial-method issues.)
 }
