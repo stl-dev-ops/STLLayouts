@@ -1,0 +1,10 @@
+
+ColumnName SqlType
+---------- -------
+b_aantal   float
+beaantal   float
+f_aantal   float
+l_aantal   float
+p_aantal   float
+
+

@@ -1,108 +1,361 @@
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using STLLayouts.Core.Entities;
 using STLLayouts.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace STLLayouts.OfficeGen;
 
-public class WordDocumentGenerator : IDocumentGenerator
+public sealed class WordDocumentGenerator : IDocumentGenerator
 {
-    public bool SupportsFormat(string fileExtension)
+    private readonly ILogger<WordDocumentGenerator> _logger;
+
+    public WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
     {
-        return fileExtension.Equals(".docx", StringComparison.OrdinalIgnoreCase);
+        _logger = logger;
     }
+
+    public bool SupportsFormat(string fileExtension)
+        => string.Equals(fileExtension, ".docx", StringComparison.OrdinalIgnoreCase);
 
     public async Task<GeneratedDocument> GenerateAsync(
         Template template,
         Dictionary<string, object> variables,
         DocumentGenerationOptions options)
     {
-        var startTime = DateTime.Now;
-        var warnings = new List<string>();
-        var populatedVariables = new Dictionary<string, object>();
+        ArgumentNullException.ThrowIfNull(template);
+        ArgumentNullException.ThrowIfNull(variables);
+        ArgumentNullException.ThrowIfNull(options);
 
-        // Generate unique filename
-        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        var fileName = $"{Path.GetFileNameWithoutExtension(template.TemplateName)}_{timestamp}.docx";
-        var outputPath = Path.Combine(options.OutputPath, fileName);
+        var sw = Stopwatch.StartNew();
 
-        // Create output directory if it doesn't exist
         Directory.CreateDirectory(options.OutputPath);
+        var outputFileName = $"{SanitizeFileName(template.TemplateName)}_{DateTime.Now:yyyyMMdd_HHmms}.docx";
+        var outputPath = Path.Combine(options.OutputPath, outputFileName);
 
-        // Copy template to output location
-        File.Copy(template.FilePath, outputPath, true);
+        File.Copy(template.FilePath, outputPath, overwrite: true);
 
-        // Open and process the document
-        await Task.Run(() =>
+        using (var doc = WordprocessingDocument.Open(outputPath, true))
         {
-            using var wordDoc = WordprocessingDocument.Open(outputPath, true);
-            var body = wordDoc.MainDocumentPart?.Document.Body;
+            ExpandRepeatingRows(doc, variables);
+            ReplaceScalarText(doc, variables, options);
 
-            if (body == null)
-            {
-                warnings.Add("Document body is null");
-                return;
-            }
+            doc.MainDocumentPart?.Document.Save();
+        }
 
-            // Process each paragraph to handle text that may be split across multiple runs
-            foreach (var paragraph in body.Descendants<Paragraph>())
-            {
-                // Get all text in the paragraph
-                var paragraphText = string.Concat(paragraph.Descendants<Text>().Select(t => t.Text));
-                
-                // Check if paragraph contains any placeholders
-                var containsPlaceholder = false;
-                var replacedText = paragraphText;
-                
-                foreach (var variable in variables)
-                {
-                    var placeholder = $"{{{{{variable.Key}}}}}"; // {{VariableName}}
-                    
-                    if (replacedText.Contains(placeholder))
-                    {
-                        replacedText = replacedText.Replace(placeholder, variable.Value?.ToString() ?? options.MissingVariablePlaceholder);
-                        populatedVariables[variable.Key] = variable.Value ?? options.MissingVariablePlaceholder;
-                        containsPlaceholder = true;
-                    }
-                }
-                
-                // If we replaced anything, update the paragraph
-                if (containsPlaceholder && paragraphText != replacedText)
-                {
-                    // Remove all existing text elements
-                    var textElements = paragraph.Descendants<Text>().ToList();
-                    foreach (var text in textElements)
-                    {
-                        text.Remove();
-                    }
-                    
-                    // Create a new run with the replaced text
-                    var run = paragraph.Descendants<Run>().FirstOrDefault();
-                    if (run == null)
-                    {
-                        run = new Run();
-                        paragraph.AppendChild(run);
-                    }
-                    
-                    run.AppendChild(new Text(replacedText));
-                }
-            }
+        sw.Stop();
 
-            // Save changes
-            wordDoc.MainDocumentPart?.Document.Save();
-        });
-
-        var fileInfo = new FileInfo(outputPath);
-        var duration = DateTime.Now - startTime;
-
-        return new GeneratedDocument
+        var info = new FileInfo(outputPath);
+        return await Task.FromResult(new GeneratedDocument
         {
             FilePath = outputPath,
-            FileName = fileName,
-            FileSizeBytes = fileInfo.Length,
-            GenerationDuration = duration,
-            Warnings = warnings,
-            PopulatedVariables = populatedVariables
-        };
+            FileName = Path.GetFileName(outputPath),
+            FileSizeBytes = info.Exists ? info.Length : 0,
+            GenerationDuration = sw.Elapsed,
+            PopulatedVariables = new Dictionary<string, object>(variables, StringComparer.OrdinalIgnoreCase)
+        });
+    }
+
+    private void ExpandRepeatingRows(WordprocessingDocument doc, Dictionary<string, object> variables)
+    {
+        // Heuristic: collection rows are marked with {{#CollectionName}} and {{/CollectionName}} in the same table.
+        // We log what we expand so it’s obvious whether list content was detected.
+
+        var body = doc.MainDocumentPart?.Document?.Body;
+        if (body == null) return;
+
+        var tables = body.Descendants<Table>().ToList();
+        foreach (var table in tables)
+        {
+            var rows = table.Elements<TableRow>().ToList();
+            for (var i = 0; i < rows.Count; i++)
+            {
+                var row = rows[i];
+                var rowText = GetRowText(row);
+
+                if (!TemplateToken.TryParseBlockStart(rowText, out var collectionName))
+                {
+                    continue;
+                }
+
+                _logger.LogInformation("Word repeat block start found for collection '{CollectionName}'", collectionName);
+
+                // optionally allow same-row end marker, but primary support is start+end markers within same row.
+                // We only require a start marker row. If the next row is an end marker row, remove it too.
+                var endRowIndex = -1;
+                for (var j = i; j < rows.Count; j++)
+                {
+                    var rt = GetRowText(rows[j]);
+                    if (TemplateToken.TryParseBlockEnd(rt, out var endName)
+                        && string.Equals(endName, collectionName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        endRowIndex = j;
+                        break;
+                    }
+                }
+
+                // Template row is expected immediately after the start marker row.
+                if (i + 1 >= rows.Count)
+                {
+                    // remove start marker row and bail
+                    row.Remove();
+                    break;
+                }
+
+                var templateRowIndex = i + 1;
+                var templateRow = rows[templateRowIndex];
+
+                // Determine where to insert generated rows.
+                var insertBefore = endRowIndex >= 0 && endRowIndex < rows.Count ? rows[endRowIndex] : null;
+
+                var items = TryGetCollectionItems(variables, collectionName);
+
+                if (items.Count == 0)
+                {
+                    var found = variables.ContainsKey(collectionName);
+                    _logger.LogWarning(
+                        "Word repeat block for collection '{CollectionName}' had 0 items (variable present: {VariablePresent})",
+                        collectionName,
+                        found);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                        "Expanding Word repeat block for collection '{CollectionName}' with {ItemCount} item(s)",
+                        collectionName,
+                        items.Count);
+                }
+
+                foreach (var item in items)
+                {
+                    var clone = (TableRow)templateRow.CloneNode(true);
+                    ReplaceRowTokens(clone, collectionName, item);
+
+                    if (insertBefore != null)
+                    {
+                        table.InsertBefore(clone, insertBefore);
+                    }
+                    else
+                    {
+                        table.AppendChild(clone);
+                    }
+                }
+
+                // Remove marker row, template row, and optional end marker row.
+                row.Remove();
+                templateRow.Remove();
+                insertBefore?.Remove();
+
+                // refresh local snapshot and restart scan (since we mutated)
+                rows = [.. table.Elements<TableRow>()];
+                i = -1;
+            }
+        }
+    }
+
+    private static IReadOnlyList<Dictionary<string, object?>> TryGetCollectionItems(Dictionary<string, object> variables, string collectionName)
+    {
+        if (!variables.TryGetValue(collectionName, out var value) || value == null)
+        {
+            return [];
+        }
+
+        if (value is IReadOnlyList<Dictionary<string, object?>> ro)
+        {
+            return ro;
+        }
+
+        if (value is IEnumerable<Dictionary<string, object?>> e)
+        {
+            return [.. e];
+        }
+
+        // tolerate List<Dictionary<string, object>> too
+        if (value is IEnumerable<Dictionary<string, object>> e2)
+        {
+            return
+            [
+                .. e2.Select(d => d.ToDictionary(k => k.Key, v => (object?)v.Value, StringComparer.OrdinalIgnoreCase))
+            ];
+        }
+
+        return [];
+    }
+
+    private static void ReplaceRowTokens(TableRow row, string collectionName, Dictionary<string, object?> item)
+    {
+        // Word frequently splits a placeholder like {{OrderLines.Description1}} across multiple runs/text nodes.
+        //
+        // Important: do NOT concatenate across the entire row, because that can cross table-cell boundaries
+        // (different column formatting) and cause content to be redistributed into the wrong cell.
+        //
+        // We therefore apply the run-spanning replacement per-cell.
+
+        foreach (var cell in row.Elements<TableCell>())
+        {
+            var texts = cell.Descendants<Text>().ToList();
+            if (texts.Count == 0) continue;
+
+            ReplaceTokensAcrossTextNodes(texts, token => ReplaceItemTokens(token, collectionName, item));
+        }
+    }
+
+    private static void ReplaceTokensAcrossTextNodes(
+        IReadOnlyList<Text> texts,
+        Func<string, string> replaceInTokenText)
+    {
+        // We look for any token start "{{" and token end "}}" across the concatenated stream of text.
+        // When found, we replace the token substring using the provided replacer, then distribute the
+        // updated combined text back into the original Text nodes preserving their original lengths
+        // (so run formatting remains stable).
+
+        // Build a working buffer of the concatenated text and map absolute indices to nodes.
+        var nodeStarts = new int[texts.Count];
+        var totalLen = 0;
+        for (var i = 0; i < texts.Count; i++)
+        {
+            nodeStarts[i] = totalLen;
+            totalLen += texts[i].Text?.Length ?? 0;
+        }
+
+        if (totalLen == 0) return;
+
+        var combined = string.Concat(texts.Select(t => t.Text ?? string.Empty));
+        var changed = false;
+
+        int FindNext(string haystack, string needle, int start)
+            => haystack.IndexOf(needle, start, StringComparison.Ordinal);
+
+        // Iterate over tokens; update `combined` as we go.
+        var scanIndex = 0;
+        while (scanIndex < combined.Length)
+        {
+            var start = FindNext(combined, "{{", scanIndex);
+            if (start < 0) break;
+
+            var end = FindNext(combined, "}}", start + 2);
+            if (end < 0) break;
+
+            var tokenLen = (end + 2) - start;
+            if (tokenLen <= 4)
+            {
+                scanIndex = end + 2;
+                continue;
+            }
+
+            var token = combined.Substring(start, tokenLen);
+            var replaced = replaceInTokenText(token);
+
+            if (!string.Equals(token, replaced, StringComparison.Ordinal))
+            {
+                combined = combined.Substring(0, start) + replaced + combined.Substring(end + 2);
+                changed = true;
+                scanIndex = start + (replaced?.Length ?? 0);
+            }
+            else
+            {
+                scanIndex = end + 2;
+            }
+        }
+
+        if (!changed)
+        {
+            return;
+        }
+
+        // Redistribute the updated combined text back into each Text node.
+        // Preserve original per-node lengths as much as possible; last node gets any overflow/underflow.
+        var idx = 0;
+        for (var i = 0; i < texts.Count; i++)
+        {
+            var originalLen = texts[i].Text?.Length ?? 0;
+            if (originalLen == 0)
+            {
+                continue;
+            }
+
+            var remaining = combined.Length - idx;
+            if (i == texts.Count - 1)
+            {
+                texts[i].Text = remaining > 0 ? combined.Substring(idx) : string.Empty;
+                idx = combined.Length;
+                continue;
+            }
+
+            if (remaining <= 0)
+            {
+                texts[i].Text = string.Empty;
+                continue;
+            }
+
+            var take = Math.Min(originalLen, remaining);
+            texts[i].Text = combined.Substring(idx, take);
+            idx += take;
+        }
+    }
+
+    private static string ReplaceItemTokens(string input, string collectionName, Dictionary<string, object?> item)
+    {
+        // Replace {{Collection.Field}} occurrences.
+        var pattern = $"\\{{\\{{\\s*{Regex.Escape(collectionName)}\\.(?<field>[A-Za-z0-9_]+)\\s*\\}}\\}}";
+        return Regex.Replace(input, pattern, m =>
+        {
+            var field = m.Groups["field"].Value;
+            if (item.TryGetValue(field, out var value) && value != null)
+            {
+                return value.ToString() ?? string.Empty;
+            }
+
+            // case-insensitive lookup fallback
+            var kvp = item.FirstOrDefault(k => string.Equals(k.Key, field, StringComparison.OrdinalIgnoreCase));
+            return kvp.Key != null ? (kvp.Value?.ToString() ?? string.Empty) : string.Empty;
+        }, RegexOptions.IgnoreCase);
+    }
+
+    private static void ReplaceScalarText(WordprocessingDocument doc, Dictionary<string, object> variables, DocumentGenerationOptions _)
+    {
+        var texts = doc.MainDocumentPart?.Document?.Descendants<Text>().ToList();
+        if (texts is not { Count: > 0 }) return;
+
+        foreach (var t in texts)
+        {
+            if (string.IsNullOrEmpty(t.Text)) continue;
+
+            var updated = t.Text;
+
+            // Replace scalar tokens {{Var}}.
+            foreach (var kvp in variables)
+            {
+                if (kvp.Value is IEnumerable<Dictionary<string, object?>> || kvp.Value is IReadOnlyList<Dictionary<string, object?>>)
+                {
+                    // collections are handled elsewhere
+                    continue;
+                }
+
+                var replacement = kvp.Value?.ToString() ?? string.Empty;
+                updated = updated.Replace(TemplateToken.Single(kvp.Key), replacement, StringComparison.OrdinalIgnoreCase);
+            }
+
+            // Missing tokens: leave as-is (options behavior could be extended later).
+            t.Text = updated;
+        }
+    }
+
+    private static string GetRowText(TableRow row)
+    {
+        // Best-effort: concatenate Text nodes.
+        return string.Concat(row.Descendants<Text>().Select(t => t.Text)).Trim();
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        foreach (var c in Path.GetInvalidFileNameChars())
+        {
+            name = name.Replace(c, '_');
+        }
+
+        return string.IsNullOrWhiteSpace(name) ? "Document" : name;
     }
 }

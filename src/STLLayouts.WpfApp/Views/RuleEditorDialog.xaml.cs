@@ -1,4 +1,5 @@
 using System.Windows;
+using STLLayouts.WpfApp.Theming;
 using STLLayouts.WpfApp.ViewModels;
 
 namespace STLLayouts.WpfApp.Views
@@ -9,6 +10,7 @@ namespace STLLayouts.WpfApp.Views
         {
             InitializeComponent();
             Loaded += OnLoaded;
+            Loaded += (_, __) => UiBrushProbe.Probe(this, "Dialog:RuleEditorDialog");
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

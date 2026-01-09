@@ -1,23 +1,36 @@
 # Workspace Governance: Build/Run Workflow
 
-This repository mandates builds and runs via VS Code tasks that call PowerShell scripts under `scripts/`.
+This repository mandates builds and runs via scripts under `scripts/`.
 
 Policy
-- All builds: Use the task "Build Solution" which runs `scripts/build.ps1`.
-- Clean rebuilds: Use the task "Rebuild Solution" which runs `scripts/rebuild.ps1`.
-- Running the app: Use the task "Run Application" which runs `scripts/run.ps1`.
+- All builds: Use `scripts/build.ps1` (or the IDE task/tool wired to it).
+- Clean rebuilds: Use `scripts/rebuild.ps1`.
+- Running the app: Use `scripts/run.ps1`.
+
+## Canonical org SQL connection (Development)
+Use this connection string across the app and repo scripts:
+
+`Data Source=STL-SQL1\CRMDB;Initial Catalog=sqlb00;Integrated Security=True;Pooling=False;Encrypt=False;Trust Server Certificate=True`
+
+Notes:
+- The SQL Server name contains a single backslash: `STL-SQL1\CRMDB`.
+- Scripts that connect to SQL Server must mirror `Encrypt=False` and `Trust Server Certificate=True`.
+
+SQL patches
+- Apply SQL patches via `scripts/*.ps1` wrappers only.
+- Do not apply patches manually in SSMS.
+- Do not use ad-hoc `sqlcmd` one-liners.
+
+Logging (mandatory)
+- Scripts must write actionable logs under `logs/`.
+- Failures/exceptions must be written to the log file as well ("just read the log" must work).
+- When an operation fails (build/run/sql patch), read the latest relevant log under `logs/` first.
 
 Guardrails
 - Scripts stop any running `STLLayouts*` or `dotnet` processes before building/running to prevent locked DLLs.
-- Scripts produce structured logs under `logs/` with timestamps.
-- Tasks are the canonical entry points; do not run `dotnet build/run` directly.
+- Tasks/scripts are the canonical entry points; avoid ad-hoc `dotnet build` / `dotnet run`.
 
 Operator Notes
-- Always trigger work via the VS Code tasks panel.
-- Monitor task terminal output; on failures, open the latest log file in `logs/`.
-- If a task is missing or altered, restore it in `.vscode/tasks.json` and re-run.
-
-Rationale
-- Ensures consistent, reliable builds and runs.
-- Centralizes logging and cleanup.
-- Avoids intermittent issues with locked files.
+- Trigger execution via the repo scripts (or IDE tasks/tools wired to them).
+- On failures, open the latest log file in `logs/`.
+- If a task is missing or altered, restore it and re-run.

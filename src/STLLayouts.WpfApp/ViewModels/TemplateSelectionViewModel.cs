@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using STLLayouts.Core.Entities;
@@ -25,7 +26,9 @@ public class TemplateSelectionViewModel : ViewModelBase
     private string _statusMessage = string.Empty;
     private string _searchText = string.Empty;
     private bool _isLoadingTemplates;
-    private List<Template> _allTemplates = new();
+    private List<Template> _allTemplates = [];
+
+    private readonly bool _autoLoadEnabled = true;
 
     public TemplateSelectionViewModel(
         ITemplateService templateService,
@@ -34,8 +37,8 @@ public class TemplateSelectionViewModel : ViewModelBase
         _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        Templates = new ObservableCollection<Template>();
-        Categories = new ObservableCollection<string> { "All" };
+        Templates = [];
+        Categories = ["All"];
 
         LoadTemplatesCommand = new AsyncRelayCommand(async _ => await LoadTemplatesAsync());
         RefreshCommand = new AsyncRelayCommand(async _ => await LoadTemplatesAsync());
@@ -45,9 +48,8 @@ public class TemplateSelectionViewModel : ViewModelBase
         _deleteTemplateCommand = new AsyncRelayCommand(async _ => await DeleteSelectedTemplateAsync(), _ => SelectedTemplate != null);
 
         // Auto-load templates on construction so the list is always fresh without clicking Load.
-        if (!_autoLoadStarted)
+        if (_autoLoadEnabled)
         {
-            _autoLoadStarted = true;
             _ = LoadTemplatesAsync();
         }
     }
@@ -109,8 +111,6 @@ public class TemplateSelectionViewModel : ViewModelBase
     public ICommand ManageRulesCommand { get; }
     public ICommand DeleteTemplateCommand => _deleteTemplateCommand;
 
-    private bool _autoLoadStarted;
-
     public async Task LoadTemplatesAsync()
     {
         if (_isLoadingTemplates)
@@ -126,7 +126,7 @@ public class TemplateSelectionViewModel : ViewModelBase
         {
             _logger.LogInformation("Loading all templates");
             var templates = await _templateService.GetAllTemplatesAsync();
-            _allTemplates = templates.OrderBy(t => t.TemplateName).ToList();
+            _allTemplates = [.. templates.OrderBy(t => t.TemplateName)];
 
             // Extract unique categories
             var categories = _allTemplates
@@ -195,10 +195,9 @@ public class TemplateSelectionViewModel : ViewModelBase
 
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
-            var searchLower = SearchText.ToLowerInvariant();
             toShow = toShow.Where(t =>
-                (t.TemplateName ?? string.Empty).IndexOf(searchLower, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                (t.Description ?? string.Empty).IndexOf(searchLower, StringComparison.OrdinalIgnoreCase) >= 0);
+                (t.TemplateName ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                (t.Description ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase));
         }
 
         Templates.Clear();
@@ -215,7 +214,7 @@ public class TemplateSelectionViewModel : ViewModelBase
         if (SelectedTemplate == null)
         {
             _logger.LogWarning("GetTemplateVariablesAsync called with no selected template");
-            return new();
+            return [];
         }
 
         try
@@ -227,7 +226,7 @@ public class TemplateSelectionViewModel : ViewModelBase
         {
             StatusMessage = $"Error detecting variables: {ex.Message}";
             _logger.LogError(ex, "Failed to detect template variables");
-            return new();
+            return [];
         }
     }
 
@@ -235,10 +234,13 @@ public class TemplateSelectionViewModel : ViewModelBase
     {
         try
         {
+            var initialDir = GetDefaultTemplateBrowseFolder();
+
             var ofd = new OpenFileDialog
             {
                 Filter = "Office Templates (*.docx;*.xlsx)|*.docx;*.xlsx|All Files (*.*)|*.*",
-                Title = "Select Template File"
+                Title = "Select Template File",
+                InitialDirectory = initialDir
             };
 
             var result = ofd.ShowDialog();
@@ -260,21 +262,61 @@ public class TemplateSelectionViewModel : ViewModelBase
                 FilePath = filePath,
                 Description = $"Registered from GUI on {DateTime.Now:yyyy-MM-dd}",
                 UploadedBy = Environment.UserName,
-                IsActive = true
+                IsActive = true,
+                Variables = await _templateService.DetectVariablesInTemplateAsync(filePath)
             };
 
-            // Detect variables and create
-            template.Variables = await _templateService.DetectVariablesInTemplateAsync(filePath);
             var created = await _templateService.CreateTemplateAsync(template);
 
             StatusMessage = $"Template registered: {created.TemplateName}";
             await LoadTemplatesAsync();
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("already exists", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning(ex, "Template upload blocked: likely duplicate name");
+            StatusMessage = ex.Message;
+            System.Windows.MessageBox.Show(
+                ex.Message,
+                "Template already exists",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to upload/register template");
             StatusMessage = $"Upload failed: {ex.Message}";
         }
+    }
+
+    private static string GetDefaultTemplateBrowseFolder()
+    {
+        try
+        {
+            // Prefer repo-local templates folder when running from the repository.
+            var baseDir = AppContext.BaseDirectory;
+
+            // Typical runtime baseDir:
+            // src\\STLLayouts.WpfApp\\bin\\Debug\\net8.0-windows\\
+            // Walk up until we find a folder that contains a 'templates' directory.
+            var dir = new DirectoryInfo(baseDir);
+            while (dir != null)
+            {
+                var candidate = Path.Combine(dir.FullName, "templates");
+                if (Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                dir = dir.Parent;
+            }
+        }
+        catch
+        {
+            // Ignore and fallback below
+        }
+
+        // Last resort: documents folder
+        return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
     }
 
     private async Task DeleteSelectedTemplateAsync()

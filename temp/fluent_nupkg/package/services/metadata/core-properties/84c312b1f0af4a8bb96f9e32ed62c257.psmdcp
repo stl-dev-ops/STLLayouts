@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coreProperties xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
+  <dc:creator>Progress</dc:creator>
+  <dc:description>UI for WPF is an enterprise-ready development suite of over 160+ UI controls for creating engaging, interactive user experiences for Windows desktop applications. This package contains NoXaml version of the assemblies.</dc:description>
+  <dc:identifier>Telerik.Windows.Themes.Fluent.for.Wpf</dc:identifier>
+  <version>2025.4.1111</version>
+  <keywords></keywords>
+  <lastModifiedBy>NuGet, Version=5.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35;Microsoft Windows NT 10.0.20348.0;.NET Framework 4.7.2</lastModifiedBy>
+</coreProperties>

@@ -11,16 +11,10 @@ namespace STLLayouts.Services;
 /// JobService queries the CERM database (sqlb00) read-only
 /// Main table: dbo_order___ with joins to dbo_klabas__ for customer details
 /// </summary>
-public class JobService : IJobService
+public class JobService(string connectionString, ILogger<JobService>? logger = null) : IJobService
 {
-    private readonly string _connectionString;
-    private readonly ILogger<JobService>? _logger;
-
-    public JobService(string connectionString, ILogger<JobService>? logger = null)
-    {
-        _connectionString = connectionString;
-        _logger = logger;
-    }
+    private readonly string _connectionString = connectionString;
+    private readonly ILogger<JobService>? _logger = logger;
 
     public async Task<List<Job>> SearchJobsAsync(JobSearchCriteria criteria)
     {
@@ -137,32 +131,125 @@ public class JobService : IJobService
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        // Comprehensive query that gets job details from CERM database
+        // Single-row "context" result that denormalizes the most common relationships.
+        // Note: for tables that can have multiple rows per order (e.g. bstlyn__, resgrd__),
+        // we pick a deterministic row (TOP 1) so mappings return a scalar.
         var sql = @"
-            SELECT 
-                o.*,
-                k.naam____ as CustomerName,
-                k.kla__rpn,
-                k.adres___ as CustomerAddress,
-                k.postcode as CustomerPostalCode,
-                k.plaats__ as CustomerCity
+            SELECT
+                -- Base order fields
+                o.*, 
+
+                -- Customer (klabas__)
+                k.naam____  AS CustomerName,
+
+                -- Fields referenced by current mappings (expose with stable column aliases)
+                o.ord__ref   AS JobNumber,
+                o.ord__rpn   AS JobOrderNumber,
+                o.best_dat   AS OrderDate,
+                o.omschr__   AS ProductDescription,
+                o.open____   AS JobStatus,
+
+                -- Customer fields used in mappings
+                k.kla__ref   AS CustomerRef,
+                k.kla__rpn   AS CustomerKeyword,
+                k.straat__   AS CustomerStreet,
+                k.wijk____   AS CustomerDistrict,
+                k.postnaam  AS CustomerCity,
+                k.telefoon  AS CustomerPhone,
+                k.telefax_  AS CustomerFax,
+
+                -- Sales line (bstlyn__) - pick first line by bstvlgnr
+                bl.afg_oms1  AS SalesLineProductDesc1,
+                bl.afg_oms2  AS SalesLineProductDesc2,
+                bl.vrz__dat  AS ShipDate,
+                bl.lev__dat  AS ActualDeliveryDate,
+                bl.l_aantal  AS DeliveredQuantity,
+
+                -- Reservation (resgrd__) - pick first reservation by dat_resv
+                rg.dat_resv  AS ReservationDate,
+                rg.reserve_  AS ReservedQuantity,
+                rg.kommen_1  AS ReservationComments1,
+                rg.kommen_2  AS ReservationComments2,
+                rg.kommen_3  AS ReservationComments3,
+
+                -- Product/version (v4vrs___)
+                v.afg__ref   AS ProductCode,
+                v.vrs__ref   AS ProductVersion,
+
+                -- Product master (afgart__)
+                a.afg_oms1   AS ProductFullDescription1,
+                a.afg_oms2   AS ProductFullDescription2,
+                a.afg__rpn   AS ProductKeyword,
+                a.art__ref   AS ProductMaterialID,
+
+                -- Material (artiky__)
+                m.art_oms1   AS MaterialDescription1,
+                m.art_oms2   AS MaterialDescription2,
+                m.diameter  AS MaterialDiameter,
+                m.grammage  AS MaterialGrammage,
+                m.hoogte__   AS MaterialHeight,
+                m.lengte__   AS MaterialLength,
+                m.breedte_   AS MaterialWidth,
+                m.art__rpn   AS MaterialKeyword,
+                m.lev__ref   AS MaterialSupplierID,
+                m.art__srt   AS MaterialType
             FROM dbo.order___ o
-            LEFT JOIN dbo.klabas__ k ON o.kla__ref = k.kla__ref
-            WHERE o.ord__ref = @JobId";
+            LEFT JOIN dbo.klabas__ k
+                ON o.kla__ref = k.kla__ref
 
-        var result = await connection.QueryAsync(sql, new { JobId = jobId });
-        var firstRow = result.FirstOrDefault();
+            OUTER APPLY (
+                SELECT TOP 1
+                    b.afg_oms1,
+                    b.afg_oms2,
+                    b.vrz__dat,
+                    b.lev__dat,
+                    b.l_aantal,
+                    b.afg__ref,
+                    b.vrs__ref
+                FROM dbo.bstlyn__ b
+                WHERE b.ord__ref = o.ord__ref
+                ORDER BY TRY_CONVERT(int, b.bstvlgnr) ASC, b.lyn__ref ASC
+            ) bl
 
+            OUTER APPLY (
+                SELECT TOP 1
+                    r.dat_resv,
+                    r.reserve_,
+                    r.kommen_1,
+                    r.kommen_2,
+                    r.kommen_3,
+                    r.art__ref,
+                    r.art__srt
+                FROM dbo.resgrd__ r
+                WHERE r.ord__ref = o.ord__ref
+                ORDER BY r.dat_resv ASC, r.res__ref ASC
+            ) rg
+
+            LEFT JOIN dbo.v4vrs___ v
+                ON v.off__ref = o.off__ref
+               AND v.vrs__ref = bl.vrs__ref
+
+            LEFT JOIN dbo.afgart__ a
+                ON a.afg__ref = v.afg__ref
+
+            LEFT JOIN dbo.artiky__ m
+                ON m.art__ref = a.art__ref
+            WHERE o.ord__ref = @JobId;";
+
+        var firstRow = await connection.QueryFirstOrDefaultAsync(sql, new { JobId = jobId });
         if (firstRow == null)
-            return new Dictionary<string, object>();
+        {
+            return [];
+        }
 
-        // Convert dynamic object to dictionary
-        var context = new Dictionary<string, object>();
+        // Convert dynamic object to dictionary. Preserve NULL so callers can distinguish
+        // "not found/missing" from an empty string.
+        var context = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         var row = (IDictionary<string, object>)firstRow;
-        
+
         foreach (var kvp in row)
         {
-            context[kvp.Key] = kvp.Value ?? string.Empty;
+            context[kvp.Key] = kvp.Value;
         }
 
         return context;

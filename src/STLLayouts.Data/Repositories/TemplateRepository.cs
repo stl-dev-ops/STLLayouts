@@ -31,5 +31,16 @@ public class TemplateRepository : Repository<Template>, ITemplateRepository
         return await _dbSet
             .Include(t => t.Versions)
             .FirstOrDefaultAsync(t => t.TemplateId == templateId);
-}
+    }
+
+    public async Task<Template?> GetByNameAsync(string templateName)
+    {
+        if (string.IsNullOrWhiteSpace(templateName))
+        {
+            return null;
+        }
+
+        return await _dbSet
+            .FirstOrDefaultAsync(t => t.TemplateName == templateName);
+    }
 }

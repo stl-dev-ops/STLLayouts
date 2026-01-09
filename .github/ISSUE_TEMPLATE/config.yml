@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security issue
+    url: https://github.com/stl-dev-ops/STLLayouts/security/policy
+    about: Do not file public issues for vulnerabilities; see SECURITY.md
+  - name: Repo docs / workflow
+    url: https://github.com/stl-dev-ops/STLLayouts/blob/master/docs/README.md
+    about: Read repository documentation and workflow.

@@ -11,6 +11,7 @@ using STLLayouts.Data.Repositories;
 using STLLayouts.OfficeGen;
 using STLLayouts.RuleEngine;
 using STLLayouts.Services;
+using STLLayouts.WpfApp.Theming;
 using STLLayouts.WpfApp.ViewModels;
 using STLLayouts.WpfApp.Views;
 
@@ -24,7 +25,7 @@ public partial class App : Application
     private ServiceProvider? _serviceProvider;
     public IConfiguration? Configuration { get; private set; }
     public static new App Current => (App)Application.Current;
-    public IServiceProvider Services => _serviceProvider!;
+    public System.IServiceProvider Services => _serviceProvider!;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -44,6 +45,16 @@ public partial class App : Application
             .ReadFrom.Configuration(Configuration)
             .CreateLogger();
 
+        // Apply Telerik Fluent dark mode (Telerik-supported API surface varies by version;
+        // we bind via reflection so upgrades don't break compilation).
+        TelerikThemeBootstrapper.ApplyFluentDarkIfAvailable();
+
+        // Keep App*Brush tokens consistent with live Telerik theme surfaces (main window + dialogs).
+        TelerikThemeBridge.AttachToApplication(this);
+
+        // Telerik GridView filtering defaults (global): hide Match Case + force case-insensitive where supported.
+        RadGridViewFilterDefaults.ApplyToApplication(this);
+
         try
         {
             Log.Information("Starting STL Layouts application");
@@ -59,6 +70,7 @@ public partial class App : Application
 
             // Show main window
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            TelerikThemeBridge.AttachToWindow(mainWindow);
             mainWindow.Show();
         }
         catch (Exception ex)
@@ -80,6 +92,10 @@ public partial class App : Application
         // Database contexts - Use CRM database for all application data (templates, rules, audit logs, etc.)
         // All tables use stlLayouts_ prefix in sqlb00 database
         var crmConnectionString = Configuration!.GetConnectionString("CRMDatabase");
+
+        services.AddDbContextFactory<ApplicationDbContext>(options =>
+            options.UseSqlServer(crmConnectionString));
+
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(crmConnectionString));
 
@@ -93,8 +109,13 @@ public partial class App : Application
 
         // Services
         Log.Information("CRM Connection String: {ConnectionString}", crmConnectionString);
-        services.AddScoped<IJobService>(provider => 
+        services.AddScoped<IJobService>(provider =>
             new JobService(crmConnectionString!, provider.GetService<ILogger<JobService>>()));
+
+        services.AddScoped<IContextSchemaService>(_ => new ContextSchemaService(crmConnectionString!));
+        services.AddScoped<ICollectionDataService>(provider =>
+            new CollectionDataService(crmConnectionString!, provider.GetRequiredService<ILogger<CollectionDataService>>()));
+
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IRuleEngineService, RuleEngineService>();
         services.AddScoped<ITemplateService, TemplateService>();

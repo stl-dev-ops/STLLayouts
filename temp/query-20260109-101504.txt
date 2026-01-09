@@ -1,0 +1,7 @@
+
+JobNumber LineId     LineNumber ProductCode ProductKeyword ProductVersion Description1                                  Description2 lyn__ref   bstvlgnr
+--------- ------     ---------- ----------- -------------- -------------- ------------                                  ------------ --------   --------
+511962    0000129621 000001     106148                     001            1" X 2.25" Blank Activation Labels, 3" Spools              0000129621 000001
+511962    0000129766 000002     106148                     001            1" X 2.25" Blank Activation Labels, 3" Spools              0000129766 000002
+
+

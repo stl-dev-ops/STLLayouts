@@ -10,6 +10,8 @@ public interface IVariableMappingService
     Task<VariableMapping> CreateMappingAsync(VariableMapping mapping);
     Task UpdateMappingAsync(VariableMapping mapping);
     Task DeleteMappingAsync(int mappingId);
+    Task DeleteMappingAsync(Guid mappingId);
     Task<Dictionary<string, object>> ResolveVariablesAsync(Job job);
     Task<object> EvaluateMappingAsync(VariableMapping mapping, Job job);
+    Task<List<VariableMappingValidationResult>> ValidateMappingsAsync(string jobId);
 }

@@ -66,6 +66,14 @@ public class TemplateService : ITemplateService
             throw new ArgumentException("Template name cannot be null or empty", nameof(template.TemplateName));
         }
 
+        // TemplateName is unique (see EF model). Provide a friendly error instead of relying on DB constraint.
+        var existing = await _repository.GetByNameAsync(template.TemplateName);
+        if (existing != null)
+        {
+            _logger.LogWarning("CreateTemplateAsync: template name already exists: {TemplateName}", template.TemplateName);
+            throw new InvalidOperationException($"A template named '{template.TemplateName}' already exists. Choose a different name or create a new version.");
+        }
+
         if (string.IsNullOrWhiteSpace(template.FilePath))
         {
             _logger.LogWarning("CreateTemplateAsync called with empty file path");

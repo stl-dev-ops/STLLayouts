@@ -1,0 +1,135 @@
+<Window x:Class="STLLayouts.WpfApp.Views.EditVariableDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        Style="{StaticResource AppChromedDialogStyle}"
+        Title="Edit Variable" Height="580" Width="600"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource AppForegroundBrush}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Edit Variable" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Variable Name *" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadWatermarkTextBox Text="{Binding VariableName, UpdateSourceTrigger=PropertyChanged}" Height="32" Margin="0,0,0,15"
+                                             Background="{DynamicResource AppSurfaceBrush}" Foreground="{DynamicResource AppForegroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <TextBlock Text="What kind of value is this?" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <RadioButton Content="Single value" GroupName="MappingKind"
+                                 IsChecked="{Binding MappingKind, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Single}"/>
+                    <RadioButton Content="List / Table (repeats)" GroupName="MappingKind" Margin="20,0,0,0"
+                                 IsChecked="{Binding MappingKind, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=List}"/>
+                </StackPanel>
+
+                <TextBlock Text="Which list?" FontWeight="SemiBold" Margin="0,0,0,5"
+                           Visibility="{Binding IsCollectionSelectorVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <telerik:RadComboBox ItemsSource="{Binding AvailableCollections}"
+                                     SelectedItem="{Binding CollectionName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Margin="0,0,0,15"
+                                     Visibility="{Binding IsCollectionSelectorVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                     Background="{DynamicResource AppSurfaceBrush}"
+                                     Foreground="{DynamicResource AppForegroundBrush}"
+                                     BorderBrush="{DynamicResource AppBorderBrush}">
+                    <telerik:RadComboBox.Resources>
+                        <!-- Style dropdown items explicitly -->
+                        <Style TargetType="telerik:RadComboBoxItem">
+                            <Setter Property="Foreground" Value="{DynamicResource AppForegroundBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource AppSurfaceBrush}"/>
+                        </Style>
+
+                        <!-- Best-effort: style the editable TextBox inside the combo (Telerik template uses a TextBox part) -->
+                        <Style TargetType="TextBox">
+                            <Setter Property="Foreground" Value="{DynamicResource AppForegroundBrush}"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </telerik:RadComboBox.Resources>
+                </telerik:RadComboBox>
+
+                <TextBlock Text="Pick a field" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadComboBox ItemsSource="{Binding AvailableFields}"
+                                     SelectedItem="{Binding SelectedFieldKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEditable="True"
+                                     Height="32" Margin="0,0,0,15"
+                                     Background="{DynamicResource AppSurfaceBrush}"
+                                     Foreground="{DynamicResource AppForegroundBrush}"
+                                     BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Database Field" FontWeight="SemiBold"/>
+                    <telerik:RadToggleButton Content="Advanced" Style="{StaticResource AppToggleSwitchStyle}"
+                                             IsChecked="{Binding IsAdvanced}" Margin="15,0,0,0" />
+                </StackPanel>
+                <telerik:RadWatermarkTextBox Text="{Binding DatabaseField, UpdateSourceTrigger=PropertyChanged}" Height="32" Margin="0,0,0,15"
+                                             IsReadOnly="{Binding IsDatabaseFieldReadOnly}"
+                                             Background="{DynamicResource AppSurfaceBrush}" Foreground="{DynamicResource AppForegroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <TextBlock Text="SQL Expression" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadWatermarkTextBox Text="{Binding SqlExpression, UpdateSourceTrigger=PropertyChanged}" Height="32" Margin="0,0,0,15"
+                                             Background="{DynamicResource AppSurfaceBrush}" Foreground="{DynamicResource AppForegroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <TextBlock Text="Data Type" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadComboBox SelectedValue="{Binding DataType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedValuePath="Content"
+                                     Height="32" Margin="0,0,0,15"
+                                     Background="{DynamicResource AppSurfaceBrush}"
+                                     Foreground="{DynamicResource AppForegroundBrush}"
+                                     BorderBrush="{DynamicResource AppBorderBrush}"
+                                     BorderThickness="1"
+                                     Padding="6,2">
+                    <telerik:RadComboBoxItem Content="String"/>
+                    <telerik:RadComboBoxItem Content="Integer"/>
+                    <telerik:RadComboBoxItem Content="Decimal"/>
+                    <telerik:RadComboBoxItem Content="DateTime"/>
+                    <telerik:RadComboBoxItem Content="Boolean"/>
+                </telerik:RadComboBox>
+
+                <TextBlock Text="Category" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadComboBox SelectedValue="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedValuePath="Content"
+                                     IsEditable="True"
+                                     Height="32"
+                                     Margin="0,0,0,15"
+                                     Background="{DynamicResource AppSurfaceBrush}"
+                                     Foreground="{DynamicResource AppForegroundBrush}"
+                                     BorderBrush="{DynamicResource AppBorderBrush}"
+                                     BorderThickness="1"
+                                     Padding="6,2"
+                                     TextSearch.TextPath="Content">
+                    <telerik:RadComboBoxItem Content="Job"/>
+                    <telerik:RadComboBoxItem Content="Customer"/>
+                    <telerik:RadComboBoxItem Content="Product"/>
+                    <telerik:RadComboBoxItem Content="Financial"/>
+                    <telerik:RadComboBoxItem Content="Other"/>
+                </telerik:RadComboBox>
+
+                <TextBlock Text="Description" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadWatermarkTextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Height="60" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,15"
+                                             Background="{DynamicResource AppSurfaceBrush}" Foreground="{DynamicResource AppForegroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <TextBlock Text="Default Value" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <telerik:RadWatermarkTextBox Text="{Binding DefaultValue, UpdateSourceTrigger=PropertyChanged}" Height="32" Margin="0,0,0,15"
+                                             Background="{DynamicResource AppSurfaceBrush}" Foreground="{DynamicResource AppForegroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" />
+
+                <telerik:RadToggleButton Content="Required"
+                                         Style="{StaticResource AppToggleSwitchStyle}"
+                                         IsChecked="{Binding IsRequired}"
+                                         Margin="0,0,0,15"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <telerik:RadButton Content="Save" Command="{Binding SaveCommand}" Width="100" Height="32" Margin="0,0,10,0"/>
+            <telerik:RadButton Content="Cancel" Click="Cancel_Click" Width="100" Height="32"/>
+        </StackPanel>
+    </Grid>
+</Window>

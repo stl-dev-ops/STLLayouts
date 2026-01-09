@@ -1,4 +1,7 @@
 using System.Windows.Controls;
+using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.GridView;
+using STLLayouts.Core.Entities;
 using STLLayouts.WpfApp.ViewModels;
 
 namespace STLLayouts.WpfApp.Views;
@@ -30,5 +33,35 @@ public partial class VariableMapView : UserControl
         {
             await viewModel.LoadMappingsAsync();
         }
+    }
+
+    private async void RadGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+    {
+        if (DataContext is not VariableMapViewModel viewModel)
+        {
+            return;
+        }
+
+        if (e.EditAction != GridViewEditAction.Commit)
+        {
+            return;
+        }
+
+        // Only persist when the Required column was edited.
+        if (e.Cell?.Column?.Header?.ToString() is not "Required")
+        {
+            return;
+        }
+
+        if (e.Cell?.ParentRow?.Item is not VariableMapping mapping)
+        {
+            return;
+        }
+
+        // Save only the row that changed.
+        var previousSelection = viewModel.SelectedMapping;
+        viewModel.SelectedMapping = mapping;
+        await viewModel.SaveMappingAsync();
+        viewModel.SelectedMapping = previousSelection;
     }
 }

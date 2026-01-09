@@ -7,4 +7,5 @@ public interface ITemplateRepository : IRepository<Template>
     Task<List<Template>> GetActiveTemplatesAsync();
     Task<List<Template>> GetTemplatesByCategoryAsync(string category);
     Task<Template?> GetTemplateWithVersionsAsync(Guid templateId);
+    Task<Template?> GetByNameAsync(string templateName);
 }

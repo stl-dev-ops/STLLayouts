@@ -1,6 +1,6 @@
 # run-debug.ps1 - Run the STLLayouts WPF application with debug output
 # Usage: .\run-debug.ps1
-# GOVERNANCE: Always called via VS Code task, never direct terminal execution
+# GOVERNANCE: Use repo scripts/tasks for build/run; avoid ad-hoc dotnet commands
 
 $ErrorActionPreference = "Stop"
 $solutionDir = Split-Path -Parent $PSScriptRoot

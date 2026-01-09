@@ -33,6 +33,26 @@ public class Repository<T> : IRepository<T> where T : class
 
     public virtual async Task UpdateAsync(T entity)
     {
+        // Prevent: "cannot be tracked because another instance with the same key value is already being tracked"
+        // This can happen when the UI holds onto a tracked entity instance and we try to Update with a different instance.
+        var key = _context.Model.FindEntityType(typeof(T))?.FindPrimaryKey();
+        if (key != null)
+        {
+            var keyValues = key.Properties
+                .Select(p => typeof(T).GetProperty(p.Name)?.GetValue(entity))
+                .ToArray();
+
+            var tracked = _context.ChangeTracker.Entries<T>()
+                .FirstOrDefault(e => key.Properties
+                    .Select(p => typeof(T).GetProperty(p.Name)?.GetValue(e.Entity))
+                    .SequenceEqual(keyValues));
+
+            if (tracked != null)
+            {
+                tracked.State = EntityState.Detached;
+            }
+        }
+
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
     }

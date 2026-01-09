@@ -6,49 +6,22 @@
         xmlns:local="clr-namespace:STLLayouts.WpfApp"
         xmlns:views="clr-namespace:STLLayouts.WpfApp.Views"
         xmlns:viewmodels="clr-namespace:STLLayouts.WpfApp.ViewModels"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         mc:Ignorable="d"
+        Style="{StaticResource AppChromedWindowStyle}"
         Title="STL Layouts - Document Generation System" 
-    Height="700" Width="1200"
-    Loaded="Window_Loaded"
-        WindowStartupLocation="CenterScreen">
-    
+        Height="700" Width="1200"
+        Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource AppForegroundBrush}">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <Style TargetType="Button">
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Background" Value="#3498db"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#bdc3c7"/>
-        </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="AutoGenerateColumns" Value="False"/>
-            <Setter Property="SelectionMode" Value="Single"/>
-            <Setter Property="CanUserAddRows" Value="False"/>
-            <Setter Property="CanUserDeleteRows" Value="False"/>
-            <Setter Property="GridLinesVisibility" Value="All"/>
-            <Setter Property="HeadersVisibility" Value="Column"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#bdc3c7"/>
-        </Style>
-        <Style TargetType="TabControl">
-            <Setter Property="Background" Value="White"/>
-        </Style>
-        <Style TargetType="TabItem">
-            <Setter Property="Background" Value="#ecf0f1"/>
-            <Setter Property="Foreground" Value="#2c3e50"/>
-        </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -56,16 +29,15 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="#2C3E50" Padding="15">
-            <TextBlock Text="STL Layouts - Document Generation System" 
-                       FontSize="24" 
-                       FontWeight="Bold" 
-                       Foreground="White"/>
+        <Border Grid.Row="0" Padding="15">
+            <TextBlock Text="STL Layouts - Document Generation System"
+                       FontSize="24"
+                       FontWeight="Bold"/>
         </Border>
 
         <!-- Main Content -->
-        <TabControl Grid.Row="1" Margin="10">
-            <TabItem Header="Job Selection &amp; Document Generation">
+        <telerik:RadTabControl x:Name="MainTabs" Grid.Row="1" Margin="10">
+            <telerik:RadTabItem Header="Job Selection &amp; Document Generation">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -87,72 +59,65 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Job Number:" VerticalAlignment="Center" Margin="5"/>
-                                <TextBox Grid.Column="1" Text="{Binding JobNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                                <telerik:RadWatermarkTextBox Grid.Column="1" Text="{Binding JobNumber, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <TextBlock Grid.Column="2" Text="Customer:" VerticalAlignment="Center" Margin="5"/>
-                                <TextBox Grid.Column="3" Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <telerik:RadWatermarkTextBox Grid.Column="3" Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" />
 
-                                <Button Grid.Column="4" Content="Search" Command="{Binding SearchCommand}"/>
+                                <telerik:RadButton Grid.Column="4" Content="Search" Command="{Binding SearchCommand}" Margin="5"/>
                             </Grid>
                         </StackPanel>
                     </GroupBox>
 
                     <!-- Jobs Grid -->
                     <GroupBox Header="Jobs" Grid.Row="1" Margin="5">
-                        <DataGrid ItemsSource="{Binding Jobs}" 
-                                  SelectedItem="{Binding SelectedJob}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Job Number" Binding="{Binding JobNumber}" Width="150"/>
-                                <DataGridTextColumn Header="Product" Binding="{Binding ProductDescription}" Width="*"/>
-                                <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="200"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
-                                <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat='{}{0:yyyy-MM-dd}'}" Width="100"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                        <telerik:RadGridView ItemsSource="{Binding Jobs}"
+                                             SelectedItem="{Binding SelectedJob}"
+                                             AutoGenerateColumns="False"
+                                             IsReadOnly="True"
+                                             SelectionMode="Single"
+                                             ShowGroupPanel="False">
+                            <telerik:RadGridView.Columns>
+                                <telerik:GridViewDataColumn Header="Job Number" DataMemberBinding="{Binding JobNumber}" Width="150"/>
+                                <telerik:GridViewDataColumn Header="Product" DataMemberBinding="{Binding ProductDescription}" Width="*"/>
+                                <telerik:GridViewDataColumn Header="Customer" DataMemberBinding="{Binding CustomerName}" Width="200"/>
+                                <telerik:GridViewDataColumn Header="Status" DataMemberBinding="{Binding JobStatus}" Width="100"/>
+                                <telerik:GridViewDataColumn Header="Created" DataMemberBinding="{Binding CreatedDate, StringFormat=yyyy-MM-dd}" Width="100"/>
+                            </telerik:RadGridView.Columns>
+                        </telerik:RadGridView>
                     </GroupBox>
 
                     <!-- Actions Panel -->
                     <GroupBox Header="Actions" Grid.Row="2" Margin="5">
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="Generate Document" 
-                                    Command="{Binding GenerateDocumentCommand}"/>
-                            <TextBlock Text="{Binding StatusMessage}" 
-                                       VerticalAlignment="Center" 
-                                       Margin="20,0,0,0"
-                                       FontWeight="Bold"/>
+                            <telerik:RadButton Content="Generate Document" Command="{Binding GenerateDocumentCommand}" />
+                            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold"/>
                         </StackPanel>
                     </GroupBox>
 
                     <!-- Suggested Templates -->
                     <GroupBox Header="Suggested Templates" Grid.Row="3" Margin="5">
-                        <DataGrid ItemsSource="{Binding SuggestedTemplates}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Template Name" Binding="{Binding TemplateName}" Width="*"/>
-                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="150"/>
-                                <DataGridTextColumn Header="Version" Binding="{Binding CurrentVersion}" Width="80"/>
-                                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                        <telerik:RadGridView ItemsSource="{Binding SuggestedTemplates}"
+                                             AutoGenerateColumns="False"
+                                             IsReadOnly="True"
+                                             SelectionMode="Single"
+                                             ShowGroupPanel="False">
+                            <telerik:RadGridView.Columns>
+                                <telerik:GridViewDataColumn Header="Template Name" DataMemberBinding="{Binding TemplateName}" Width="*"/>
+                                <telerik:GridViewDataColumn Header="Category" DataMemberBinding="{Binding Category}" Width="150"/>
+                                <telerik:GridViewDataColumn Header="Version" DataMemberBinding="{Binding CurrentVersion}" Width="80"/>
+                                <telerik:GridViewCheckBoxColumn Header="Active" DataMemberBinding="{Binding IsActive}" Width="80"/>
+                            </telerik:RadGridView.Columns>
+                        </telerik:RadGridView>
                     </GroupBox>
                 </Grid>
-            </TabItem>
+            </telerik:RadTabItem>
 
-            <TabItem x:Name="TemplateTab" Header="Templates">
-                <!-- Content set in code-behind -->
-            </TabItem>
-
-            <TabItem x:Name="VariableMappingsTab" Header="Variable Mappings">
-                <!-- Content set in code-behind -->
-            </TabItem>
-
-            <TabItem x:Name="DocumentPreviewTab" Header="Document Preview">
-                <!-- Content set in code-behind -->
-            </TabItem>
-
-            <TabItem x:Name="SettingsTab" Header="Settings">
-                <!-- Content set in code-behind -->
-            </TabItem>
-        </TabControl>
+            <telerik:RadTabItem x:Name="TemplateTab" Header="Templates" />
+            <telerik:RadTabItem x:Name="VariableMappingsTab" Header="Variable Mappings" />
+            <telerik:RadTabItem x:Name="DocumentPreviewTab" Header="Document Preview" />
+            <telerik:RadTabItem x:Name="SettingsTab" Header="Settings" />
+        </telerik:RadTabControl>
 
         <!-- Status Bar -->
         <StatusBar Grid.Row="2">

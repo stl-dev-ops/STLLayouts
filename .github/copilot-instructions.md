@@ -1,26 +1,54 @@
-# Copilot Governance for STLLayouts
+# Copilot Instructions (Repo Focus)
 
-Purpose: Ensure builds and runs ALWAYS use VS Code Tasks that call repo scripts, with logs monitored. Never use ad-hoc terminal commands for these operations.
+## Goal
+Help Copilot produce changes that fit this repository by using the repo’s own context (architecture, conventions, and current priorities).
 
-Required Workflow
-- Build: Use the VS Code task "Build Solution" (runs scripts/build.ps1).
-- Clean Rebuild: Use the VS Code task "Rebuild Solution" (runs scripts/rebuild.ps1).
-- Run: Use the VS Code task "Run Application" (runs scripts/run.ps1).
+## Source of Truth (read these first)
+- `README.md`
+- `ARCHITECTURE.md`
+- `REQUIREMENTS.md`
+- `ROADMAP.md`
+- `TODO.md`
+- `CHANGELOG.md`
+- `docs/README.md`
 
-Non-Negotiable Rules
-- Do NOT run `dotnet build`, `dotnet run`, or PowerShell scripts directly in a terminal.
-- If a task is missing or fails to resolve, first fix `.vscode/tasks.json` and then run the task. Do not fall back to terminal execution.
-- Always monitor the task terminal output and, when relevant, summarize the latest file under `logs/` (e.g., `build-*.log`, `run-*.log`).
+## Canonical org SQL connection (Development)
+Use this connection string across the app and repo scripts:
 
-If Tasks Are Missing or Broken
-1) Patch `.vscode/tasks.json` to restore the required tasks (labels above).
-2) Re-run via VS Code tasks (not terminal).
-3) On failure, open and summarize the log in `logs/`.
+`Data Source=STL-SQL1\\CRMDB;Initial Catalog=sqlb00;Integrated Security=True;Pooling=False;Encrypt=False;Trust Server Certificate=True`
 
-Rationale
-- Prevents DLL locking by ensuring pre-run cleanup occurs in scripts.
-- Centralizes diagnostics in timestamped logs.
-- Keeps behavior consistent and reproducible for all operators.
+Notes:
+- The SQL Server name contains a single backslash: `STL-SQL1\\CRMDB`.
+- Scripts/tools that connect to SQL Server must mirror `Encrypt=False` and `Trust Server Certificate=True`.
 
-Scope
-- These rules apply to ALL build and run operations inside this repository.
+## Working Style
+- Prefer the smallest correct change.
+- Follow existing patterns and folder structure.
+- If requirements are unclear, ask 1–3 specific questions before coding.
+- When proposing a multi-step change, outline a short plan first.
+
+## Automation & Logging (Non-Negotiable)
+- Do NOT run `dotnet build` or `dotnet run` directly.
+- Always use the repo scripts:
+  - `scripts/build.ps1`
+  - `scripts/rebuild.ps1`
+  - `scripts/run.ps1`
+- SQL patches must be applied via `scripts/*.ps1` (no manual SSMS execution and no ad-hoc `sqlcmd` one-liners).
+- All scripts must write actionable logs under `logs/` (including failures/exceptions).
+- If an operation fails (build/run/sql patch), always open and summarize the latest relevant log under `logs/`.
+
+## Read-only DB verification (Repo-governed)
+- For read-only database verification, use `scripts/query-crmdb.ps1` or other purpose-built scripts in `scripts/`.
+- These scripts must log under `logs/` and must use the canonical org SQL connection defaults (see above).
+
+## IDE guidance
+### Visual Studio
+Use External Tools (or equivalent) wired to the repo scripts.
+
+### VS Code
+Use `.vscode/tasks.json` tasks wired to the repo scripts.
+
+## Output Expectations
+- Identify the likely files to change.
+- Make changes easy to review.
+- Update `TODO.md` and/or `CHANGELOG.md` when appropriate.

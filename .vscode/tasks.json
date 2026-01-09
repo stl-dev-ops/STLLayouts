@@ -110,147 +110,6 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": false
-			},
-			"problemMatcher": "$msCompile"
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "dedicated",
-				"showReuseMessage": false,
-				"clear": true
-			},
-			"problemMatcher": {
-				"owner": "custom",
-				"pattern": {
-					"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"severity": 4,
-					"message": 5
-				},
-				"background": {
-					"activeOnStart": true,
-					"beginsPattern": "^.*Starting application.*$",
-					"endsPattern": "^.*Application started.*$"
-				}
-			}
-		},
-		{
-			"label": "Run Application (Debug)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run-debug.ps1"
-			],
-			"isBackground": true,
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "dedicated",
-				"showReuseMessage": false,
-				"clear": true
-			},
-			"problemMatcher": {
-				"owner": "custom",
-				"pattern": {
-					"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"severity": 4,
-					"message": 5
-				},
-				"background": {
-					"activeOnStart": true,
-					"beginsPattern": "^.*Starting application.*$",
-					"endsPattern": "^.*Application started.*$"
-				}
-			}
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": false
-			},
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": false
-			},
-			"problemMatcher": "$msCompile"
-		},
-		{
-			"label": "Dev Cycle",
-			"type": "shell",
-			"command": "echo",
-			"args": [
-				"Starting Dev Cycle (Rebuild → Run)"
-			],
-			"dependsOn": [
-				"Rebuild Solution",
-				"Run Application"
-			],
-			"dependsOrder": "sequence",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": false
-			}
-		},
-		{
 			"label": "Clean Build",
 			"type": "shell",
 			"command": "powershell",
@@ -291,74 +150,125 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Build and Run",
-			"dependsOn": [
-				"Build Solution",
-				"Run Application"
+			"label": "Build Solution",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build.ps1"
 			],
-			"dependsOrder": "sequence",
-			"problemMatcher": []
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": "$msCompile"
 		},
 		{
 			"label": "Rebuild Solution",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
+				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
 				"${workspaceFolder}/scripts/rebuild.ps1"
 			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": "$msCompile"
 		},
 		{
 			"label": "Run Application",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
+				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
 				"${workspaceFolder}/scripts/run.ps1"
 			],
 			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": {
+					"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "^.*Starting application.*$",
+					"endsPattern": "^.*Application started.*$"
+				}
+			}
 		},
 		{
-			"label": "Dev Cycle",
-			"type": "shell",
-			"command": "echo",
-			"args": [
-				"Starting Dev Cycle (Rebuild \u001a Run)"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
+			"label": "Run Application (Debug)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
+				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
+				"${workspaceFolder}/scripts/run-debug.ps1"
 			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": {
+					"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "^.*Starting application.*$",
+					"endsPattern": "^.*Application started.*$"
+				}
+			}
 		},
 		{
 			"label": "Dev Cycle",
@@ -367,366 +277,28 @@
 			"args": [
 				"Starting Dev Cycle (Rebuild → Run)"
 			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
+			"dependsOn": [
+				"Rebuild Solution",
+				"Run Application"
 			],
-			"group": "build"
+			"dependsOrder": "sequence",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
 		},
 		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
+			"label": "Build and Run",
+			"dependsOn": [
+				"Build Solution",
+				"Run Application"
 			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Build Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/build.ps1"
-			]
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Run Application",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run.ps1"
-			],
-			"isBackground": true,
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/rebuild.ps1"
-			]
-		},
-		{
-			"label": "Rebuild Solution",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}\\scripts\\rebuild.ps1"
-			],
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"group": "build"
+			"dependsOrder": "sequence",
+			"problemMatcher": []
 		}
 	],
 	"inputs": [

@@ -1,0 +1,20 @@
+{
+  "SchemaName": "dbo",
+  "ObjectName": "stlLayouts_VariableMapping",
+  "ObjectType": "U ",
+  "Score": 37,
+  "FullName": "[dbo].[stlLayouts_VariableMapping]",
+  "Columns": [
+    "VariableMappingId",
+    "VariableName",
+    "DatabaseField",
+    "DataType",
+    "Category",
+    "DefaultValue",
+    "IsRequired",
+    "CreatedDate",
+    "SqlExpression",
+    "Description",
+    "CreatedBy"
+  ]
+}

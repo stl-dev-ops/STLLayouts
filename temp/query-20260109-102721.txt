@@ -1,0 +1,6 @@
+
+lyn__ref   bstvlgnr afg__ref afg__rpn afg2_ref versiref zynrefkl afg_oms1                                      afg_oms2 kla__ref
+--------   -------- -------- -------- -------- -------- -------- --------                                      -------- --------
+0000129621 000001   106148            106148   001               1" X 2.25" Blank Activation Labels, 3" Spools          100208
+
+

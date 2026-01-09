@@ -3,13 +3,8 @@ using STLLayouts.Core.Entities;
 
 namespace STLLayouts.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
-
     // Jobs are read from CERM database via Dapper, not managed by EF Core
     public DbSet<Template> Templates { get; set; } = null!;
     public DbSet<TemplateVersion> TemplateVersions { get; set; } = null!;
@@ -74,9 +69,20 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.VariableMappingId);
             entity.Property(e => e.VariableName).IsRequired().HasMaxLength(200);
             entity.Property(e => e.DatabaseField).HasMaxLength(200);
+            entity.Property(e => e.SqlExpression);
+
+            entity.Property(e => e.MappingKind)
+                .HasConversion<int>()
+                .HasDefaultValue(MappingKind.Single);
+            entity.Property(e => e.CollectionName).HasMaxLength(200);
+            entity.Property(e => e.FieldKey).HasMaxLength(200);
+
             entity.Property(e => e.DataType).HasMaxLength(50);
             entity.Property(e => e.Category).HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+
             entity.HasIndex(e => e.VariableName).IsUnique();
             entity.HasIndex(e => e.Category);
         });

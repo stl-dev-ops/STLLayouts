@@ -1,0 +1,7 @@
+
+JobNumber lyn__ref   bstvlgnr afg__ref afg__rpn afg2_ref versiref zynrefkl afg_oms1                                      afg_oms2
+--------- --------   -------- -------- -------- -------- -------- -------- --------                                      --------
+511962    0000129621 000001   106148            106148   001               1" X 2.25" Blank Activation Labels, 3" Spools 
+511962    0000129766 000002   106148            106148   001               1" X 2.25" Blank Activation Labels, 3" Spools 
+
+

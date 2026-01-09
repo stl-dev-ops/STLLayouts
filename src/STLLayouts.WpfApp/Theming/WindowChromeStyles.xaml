@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:theming="clr-namespace:STLLayouts.WpfApp.Theming">
+
+    <Style x:Key="AppChromeButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="Foreground" Value="{DynamicResource AppForegroundBrush}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#22FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#33FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppChromeCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource AppChromeButtonStyle}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#66FF3B30" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#88FF3B30" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Window template with custom title bar. Content must include a Grid named PART_AppTitleBar. -->
+    <Style x:Key="AppChromedWindowStyle" TargetType="Window">
+        <Setter Property="theming:WindowChromeBehavior.UseCustomChrome" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <DockPanel LastChildFill="True">
+                            <Grid x:Name="PART_AppTitleBar"
+                                  DockPanel.Dock="Top"
+                                  Height="40"
+                                  Background="{DynamicResource AppSurfaceBrush}"
+                                  HorizontalAlignment="Stretch"
+                                  SnapsToDevicePixels="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Width="18" Height="18" Margin="12,0,8,0" VerticalAlignment="Center"
+                                       Source="{DynamicResource AppIconImage}" />
+
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13"
+                                           Text="{TemplateBinding Title}" />
+
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,6,0">
+                                    <Button x:Name="PART_AppMinButton" Style="{StaticResource AppChromeButtonStyle}" Content="_" Width="44" />
+                                    <Button x:Name="PART_AppMaxButton" Style="{StaticResource AppChromeButtonStyle}" Content="[]" Width="44" />
+                                    <Button x:Name="PART_AppCloseButton" Style="{StaticResource AppChromeCloseButtonStyle}" Content="X" Width="44" />
+                                </StackPanel>
+                            </Grid>
+
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Dialog variant: no maximize button, resize disabled by default. -->
+    <Style x:Key="AppChromedDialogStyle" TargetType="Window" BasedOn="{StaticResource AppChromedWindowStyle}">
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <DockPanel LastChildFill="True">
+                            <Grid x:Name="PART_AppTitleBar"
+                                  DockPanel.Dock="Top"
+                                  Height="40"
+                                  Background="{DynamicResource AppSurfaceBrush}"
+                                  HorizontalAlignment="Stretch"
+                                  SnapsToDevicePixels="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Width="18" Height="18" Margin="12,0,8,0" VerticalAlignment="Center"
+                                       Source="{DynamicResource AppIconImage}" />
+
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13"
+                                           Text="{TemplateBinding Title}" />
+
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,6,0">
+                                    <Button x:Name="PART_AppMinButton" Style="{StaticResource AppChromeButtonStyle}" Content="_" Visibility="Collapsed" Width="44" />
+                                    <Button x:Name="PART_AppMaxButton" Style="{StaticResource AppChromeButtonStyle}" Content="[]" Visibility="Collapsed" Width="44" />
+                                    <Button x:Name="PART_AppCloseButton" Style="{StaticResource AppChromeCloseButtonStyle}" Content="X" Width="44" />
+                                </StackPanel>
+                            </Grid>
+
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

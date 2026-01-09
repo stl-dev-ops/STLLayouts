@@ -1,0 +1,7 @@
+dbo.afgart__
+dbo.artiky__
+dbo.bstlyn__
+dbo.klabas__
+dbo.order___
+dbo.resgrd__
+dbo.v4vrs___

@@ -1,6 +1,5 @@
 # run.ps1 - Run the STLLayouts WPF application
 # Usage: .\run.ps1
-# GOVERNANCE: Always called via VS Code task, never direct terminal execution
 
 $ErrorActionPreference = "Stop"
 $solutionDir = Split-Path -Parent $PSScriptRoot
@@ -39,20 +38,24 @@ Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Starting application..." -Foregroun
 Write-Host ""
 
 try {
-    # Change to project directory so appsettings.json can be found
-    Push-Location $projectDir
-    
-    # Start the application process
-    $process = Start-Process -FilePath "dotnet" `
-                             -ArgumentList "run --configuration Release" `
+    $configuration = "Debug"
+    $tfm = "net8.0-windows"
+
+    $appExe = Join-Path $projectDir ("bin\\$configuration\\$tfm\\STLLayouts.exe")
+    if (-not (Test-Path $appExe)) {
+        Write-Host "ERROR: Built application not found: $appExe" -ForegroundColor Red
+        Write-Host "Run scripts/build.ps1 first." -ForegroundColor Yellow
+        exit 1
+    }
+
+    # Run the built exe so dependency resolution happens from the output folder.
+    $process = Start-Process -FilePath $appExe `
                              -NoNewWindow `
                              -PassThru `
-                             -WorkingDirectory $projectDir `
+                             -WorkingDirectory (Split-Path -Parent $appExe) `
                              -RedirectStandardOutput $logFile `
                              -RedirectStandardError "${logFile}.err"
-    
-    Pop-Location
-    
+
     Write-Host "Application started successfully!" -ForegroundColor Green
     Write-Host "Process ID: $($process.Id)" -ForegroundColor Gray
     Write-Host ""
@@ -61,11 +64,9 @@ try {
     Write-Host "  Errors: ${logFile}.err" -ForegroundColor Gray
     Write-Host ""
     Write-Host "To stop the application, close the application window or terminate process $($process.Id)" -ForegroundColor Yellow
-    
-    # Wait for the process to exit
+
     $process.WaitForExit()
-    
-    # Check exit code
+
     if ($process.ExitCode -eq 0) {
         Write-Host ""
         Write-Host "Application exited normally." -ForegroundColor Green
@@ -74,7 +75,7 @@ try {
         Write-Host "Application exited with code: $($process.ExitCode)" -ForegroundColor Red
         Write-Host "Check log files for details." -ForegroundColor Yellow
     }
-    
+
 } catch {
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Red

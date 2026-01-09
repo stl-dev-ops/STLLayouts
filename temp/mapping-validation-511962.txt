@@ -1,0 +1,48 @@
+JobId: 511962
+---
+EMPTY: 8
+NULL: 20
+WORKS: 29
+---
+Top NOT_FOUND:
+
+Top NULL:
+
+VariableName            DatabaseField         ResolvedFrom ResolvedKey
+------------            -------------         ------------ -----------
+MaterialDescription1    dbo.artiky__.art_oms1 Alias        MaterialDescription1
+MaterialDescription2    dbo.artiky__.art_oms2 Alias        MaterialDescription2
+MaterialDiameter        dbo.artiky__.diameter Alias        MaterialDiameter
+MaterialGrammage        dbo.artiky__.grammage Alias        MaterialGrammage
+MaterialHeight          dbo.artiky__.hoogte__ Alias        MaterialHeight
+MaterialKeyword         dbo.artiky__.art__rpn Alias        MaterialKeyword
+MaterialLength          dbo.artiky__.lengte__ Alias        MaterialLength
+MaterialType            dbo.artiky__.art__srt Alias        MaterialType
+MaterialWidth           dbo.artiky__.breedte_ Alias        MaterialWidth
+ProductCode             dbo.v4vrs___.afg__ref Alias        ProductCode
+ProductFullDescription1 dbo.afgart__.afg_oms1 Alias        ProductFullDescription1
+ProductFullDescription2 dbo.afgart__.afg_oms2 Alias        ProductFullDescription2
+ProductKeyword          dbo.afgart__.afg__rpn Alias        ProductKeyword
+ProductMaterialID       dbo.afgart__.art__ref Alias        ProductMaterialID
+ProductVersion          dbo.v4vrs___.vrs__ref Alias        ProductVersion
+ReservationComments1    dbo.resgrd__.kommen_1 Alias        ReservationComments1
+ReservationComments2    dbo.resgrd__.kommen_2 Alias        ReservationComments2
+ReservationComments3    dbo.resgrd__.kommen_3 Alias        ReservationComments3
+ReservationDate         dbo.resgrd__.dat_resv Alias        ReservationDate
+ReservedQuantity        dbo.resgrd__.reserve_ Alias        ReservedQuantity
+
+
+Top EMPTY:
+
+VariableName          DatabaseField         ResolvedFrom    ResolvedKey
+------------          -------------         ------------    -----------
+CustomerDistrict      dbo.klabas__.wijk____ Alias           CustomerDistrict
+CustomerLotNumber     dbo.order___.lotnrkla StrippedDbField lotnrkla
+CustomerPO            dbo.order___.bsbn_kla StrippedDbField bsbn_kla
+CustomerReference2    dbo.order___.refbykla StrippedDbField refbykla
+DeliveryLocation      dbo.order___.lok__ref StrippedDbField lok__ref
+JobOrderNumber        dbo.order___.ord__rpn StrippedDbField ord__rpn
+MaterialSupplierID    dbo.artiky__.lev__ref StrippedDbField lev__ref
+SalesLineProductDesc2 dbo.bstlyn__.afg_oms2 Alias           SalesLineProductDesc2
+
+

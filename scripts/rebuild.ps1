@@ -25,14 +25,16 @@ Start-Sleep -Seconds 1
 
 $startTime = Get-Date
 try {
+    $configuration = "Debug"
+
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Cleaning solution..." -ForegroundColor Yellow
-    dotnet clean "$solutionDir" --configuration Release 2>&1 | Tee-Object -FilePath $logFile
+    dotnet clean "$solutionDir" --configuration $configuration 2>&1 | Tee-Object -FilePath $logFile
 
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Restoring packages..." -ForegroundColor Yellow
     dotnet restore "$solutionDir" 2>&1 | Tee-Object -FilePath $logFile -Append
 
     Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Building solution..." -ForegroundColor Yellow
-    dotnet build "$solutionDir" --configuration Release --verbosity minimal 2>&1 | Tee-Object -FilePath $logFile -Append
+    dotnet build "$solutionDir" --configuration $configuration --verbosity minimal 2>&1 | Tee-Object -FilePath $logFile -Append
 
     if ($LASTEXITCODE -eq 0) {
         $duration = (Get-Date) - $startTime

@@ -28,13 +28,14 @@ public class VariableMapViewModel : ViewModelBase
         _variableMappingService = variableMappingService ?? throw new ArgumentNullException(nameof(variableMappingService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        VariableMappings = new ObservableCollection<VariableMapping>();
-        Categories = new ObservableCollection<string> { "All" };
+        VariableMappings = [];
+        Categories = ["All"];
 
         LoadMappingsCommand = new AsyncRelayCommand(async _ => await LoadMappingsAsync());
         SaveMappingCommand = new AsyncRelayCommand(async _ => await SaveMappingAsync(), _ => SelectedMapping != null);
         DeleteMappingCommand = new AsyncRelayCommand(async _ => await DeleteMappingAsync(), _ => SelectedMapping != null);
         CreateVariableCommand = new AsyncRelayCommand(async _ => await CreateVariableAsync());
+        EditVariableCommand = new AsyncRelayCommand(async _ => await EditVariableAsync(), _ => SelectedMapping != null);
     }
 
     public ObservableCollection<VariableMapping> VariableMappings { get; }
@@ -74,6 +75,7 @@ public class VariableMapViewModel : ViewModelBase
     public ICommand SaveMappingCommand { get; }
     public ICommand DeleteMappingCommand { get; }
     public ICommand CreateVariableCommand { get; }
+    public ICommand EditVariableCommand { get; }
 
     public async Task LoadMappingsAsync()
     {
@@ -131,9 +133,7 @@ public class VariableMapViewModel : ViewModelBase
 
             if (SelectedCategory != "All")
             {
-                mappings = mappings
-                    .Where(m => m.Category == SelectedCategory)
-                    .ToList();
+                mappings = [.. mappings.Where(m => m.Category == SelectedCategory)];
             }
 
             VariableMappings.Clear();
@@ -194,8 +194,7 @@ public class VariableMapViewModel : ViewModelBase
         try
         {
             _logger.LogInformation("Deleting variable mapping: {VariableName}", SelectedMapping.VariableName);
-            // Note: Using 0 as placeholder since the interface expects int
-            await _variableMappingService.DeleteMappingAsync(0);
+            await _variableMappingService.DeleteMappingAsync(SelectedMapping.VariableMappingId);
 
             var mappingToRemove = VariableMappings.FirstOrDefault(m => m.VariableMappingId == SelectedMapping.VariableMappingId);
             if (mappingToRemove != null)
@@ -220,8 +219,10 @@ public class VariableMapViewModel : ViewModelBase
         {
             var services = ((App)System.Windows.Application.Current).Services;
             var logger = services.GetService(typeof(ILogger<CreateVariableViewModel>)) as ILogger<CreateVariableViewModel>;
-            var viewModel = new CreateVariableViewModel(_variableMappingService, logger!);
-            
+            var contextSchemaService = services.GetService(typeof(IContextSchemaService)) as IContextSchemaService;
+
+            var viewModel = new CreateVariableViewModel(_variableMappingService, contextSchemaService!, logger!);
+
             var dialog = new Views.CreateVariableDialog(viewModel);
             var result = dialog.ShowDialog();
 
@@ -239,6 +240,37 @@ public class VariableMapViewModel : ViewModelBase
         }
     }
 
+    private async Task EditVariableAsync()
+    {
+        if (SelectedMapping == null)
+        {
+            return;
+        }
+
+        try
+        {
+            var services = ((App)System.Windows.Application.Current).Services;
+            var logger = services.GetService(typeof(ILogger<EditVariableViewModel>)) as ILogger<EditVariableViewModel>;
+            var contextSchemaService = services.GetService(typeof(IContextSchemaService)) as IContextSchemaService;
+
+            var vm = new EditVariableViewModel(_variableMappingService, contextSchemaService!, logger!, SelectedMapping);
+
+            var dialog = new Views.EditVariableDialog(vm);
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                await LoadMappingsAsync();
+                StatusMessage = "Variable updated successfully";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error editing variable: {ex.Message}";
+            _logger.LogError(ex, "Failed to edit variable");
+        }
+    }
+
     /// <summary>
     /// Resolves all mappings for a given job.
     /// </summary>
@@ -247,7 +279,7 @@ public class VariableMapViewModel : ViewModelBase
         if (job == null)
         {
             _logger.LogWarning("ResolveJobVariablesAsync called with null job");
-            return new();
+            return [];
         }
 
         try
@@ -259,7 +291,7 @@ public class VariableMapViewModel : ViewModelBase
         {
             StatusMessage = $"Error resolving variables: {ex.Message}";
             _logger.LogError(ex, "Failed to resolve job variables");
-            return new();
+            return [];
         }
     }
 }

@@ -32,9 +32,12 @@ $buildStartTime = Get-Date
 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Starting build..." -ForegroundColor Yellow
 
 try {
+    # Build Debug by default to avoid intermittent WPF wpftmp generated g.cs missing errors in Release.
+    $configuration = "Debug"
+
     # Build the solution
-    $output = dotnet build "$solutionDir" --configuration Release --verbosity minimal 2>&1 | Tee-Object -FilePath $logFile
-    
+    $output = dotnet build "$solutionDir" --configuration $configuration --verbosity minimal 2>&1 | Tee-Object -FilePath $logFile
+
     if ($LASTEXITCODE -eq 0) {
         $buildEndTime = Get-Date
         $duration = $buildEndTime - $buildStartTime

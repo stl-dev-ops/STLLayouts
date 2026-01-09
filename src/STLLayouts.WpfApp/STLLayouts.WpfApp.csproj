@@ -24,6 +24,11 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+
+    <PackageReference Include="Telerik.UI.for.Wpf.80.Xaml" Version="2025.4.1111" />
+
+    <!-- Fluent theme runtime assembly used by App.xaml merged dictionaries -->
+    <PackageReference Include="Telerik.Windows.Themes.Fluent.for.Wpf" Version="2025.4.1111" />
   </ItemGroup>
 
   <ItemGroup>

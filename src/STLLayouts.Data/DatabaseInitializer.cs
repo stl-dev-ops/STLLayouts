@@ -1,19 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using STLLayouts.Core.Entities;
+using STLLayouts.Data.Schema;
 
 namespace STLLayouts.Data;
 
-public class DatabaseInitializer
+public class DatabaseInitializer(ApplicationDbContext context, ILogger<DatabaseInitializer> logger)
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<DatabaseInitializer> _logger;
-
-    public DatabaseInitializer(ApplicationDbContext context, ILogger<DatabaseInitializer> logger)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ApplicationDbContext _context = context;
+    private readonly ILogger<DatabaseInitializer> _logger = logger;
 
     public async Task InitializeAsync()
     {
@@ -25,6 +20,9 @@ public class DatabaseInitializer
             // Ensure database schema exists
             await _context.Database.EnsureCreatedAsync();
             _logger.LogInformation("Database schema initialized (tables created if needed)");
+
+            // Ensure required DB views exist for context discovery/mapping.
+            await EnsureViewsAsync();
 
             // Check if data already exists
             if (await _context.Templates.AnyAsync())
@@ -41,6 +39,35 @@ public class DatabaseInitializer
             _logger.LogError(ex, "Database initialization error: {Message}", ex.Message);
             // Don't throw - allow app to continue even if templates can't be seeded
             // Job search will still work against CERM database
+        }
+    }
+
+    private async Task EnsureViewsAsync()
+    {
+        try
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var repoRootGuess = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", ".."));
+
+            var viewScripts = new[]
+            {
+                Path.Combine(repoRootGuess, "SQL", "schema", "views", "dbo.vw_STLLayouts_JobContext.sql"),
+                Path.Combine(repoRootGuess, "SQL", "schema", "views", "dbo.vw_STLLayouts_OrderLines.sql"),
+                Path.Combine(repoRootGuess, "SQL", "schema", "views", "dbo.vw_STLLayouts_Reservations.sql")
+            };
+
+            foreach (var script in viewScripts)
+            {
+                await SqlScriptRunner.ExecuteSqlFileAsync(_context, script, _logger);
+            }
+
+            _logger.LogInformation("Context views ensured (CREATE OR ALTER VIEW)");
+        }
+        catch (Exception ex)
+        {
+            // Don't fail app if view deployment fails (permissions, missing base tables, etc.).
+            // The UI will just show an empty field list and the logs will explain why.
+            _logger.LogWarning(ex, "Failed to ensure context views. Schema discovery may be unavailable.");
         }
     }
 
@@ -63,7 +90,7 @@ public class DatabaseInitializer
                 IsActive = true,
                 UploadedBy = "System",
                 UploadedDate = DateTime.UtcNow,
-                Variables = new() { "JobNumber", "CustomerName", "ProductDescription", "Quantity", "DueDate" }
+                Variables = ["JobNumber", "CustomerName", "ProductDescription", "Quantity", "DueDate"]
             },
             new Template
             {
@@ -77,7 +104,7 @@ public class DatabaseInitializer
                 IsActive = true,
                 UploadedBy = "System",
                 UploadedDate = DateTime.UtcNow,
-                Variables = new() { "CustomerName", "JobNumber", "ShipDate", "Address" }
+                Variables = ["CustomerName", "JobNumber", "ShipDate", "Address"]
             },
             new Template
             {
@@ -91,7 +118,7 @@ public class DatabaseInitializer
                 IsActive = true,
                 UploadedBy = "System",
                 UploadedDate = DateTime.UtcNow,
-                Variables = new() { "JobNumber", "ProductDescription", "InspectionDate", "ApprovedBy" }
+                Variables = ["JobNumber", "ProductDescription", "InspectionDate", "ApprovedBy"]
             }
         };
 
