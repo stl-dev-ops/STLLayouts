@@ -2,22 +2,24 @@
 
 **MANDATORY FOR AI AGENT - NON-NEGOTIABLE**
 
-## PRIMARY CONSTRAINT: APPLICATION EXECUTION
+## Repo: `STLLayouts` (C:\dev\STLLayouts)
+This policy applies to the STLLayouts repository.
 
-If the task involves running, testing, or launching the STLLayouts application:
-- Use VS Code tasks defined in `.vscode/tasks.json`.
-- Do not run `dotnet` commands directly.
-- Do not execute `scripts/*.ps1` directly from a terminal.
+## PRIMARY CONSTRAINT: BUILD/RUN ENTRY POINTS
+If the task involves building, testing, or launching the STLLayouts application:
+- Use the repo scripts (`scripts/build.ps1`, `scripts/rebuild.ps1`, `scripts/run.ps1`, `scripts/run-debug.ps1`).
+- **Human preferred UX**: VS Code tasks defined in `.vscode/tasks.json` which invoke the repo scripts.
+- **Agent/automation allowed**: invoking the same repo scripts directly from a terminal.
+- Do not use ad-hoc `dotnet build` / `dotnet run`.
 
-## Available Tasks
+## Available Tasks (VS Code)
 - `Build Solution`
 - `Rebuild Solution`
 - `Run Application` (Release)
 - `Run Application (Debug)`
-- `Build and Run`
 
 ## Enforcement
-Do not work around broken tasks by using terminal commands.
-Fix the tasks to call the repo scripts, then re-run via tasks.
+- Do not work around broken tasks by using raw `dotnet` commands.
+- If tasks are missing/broken, fix `.vscode/tasks.json` to call the repo scripts, then re-run.
 
 **STATUS**: ✅ ACTIVE AND BINDING

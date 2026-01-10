@@ -8,23 +8,26 @@ This is the canonical backlog. It is structured into sprints so humans and Copil
 - Keep items small enough to complete and commit frequently.
 
 ## Active Sprint
-**Sprint**: Sprint ____
-**Dates (optional)**: __________
-**Sprint Goal**: __________
+**Sprint**: Sprint 2026-01 (Stabilization)
+**Dates (optional)**: 2026-01-09 → 2026-01-24
+**Sprint Goal**: Stabilize variable mapping + repeating sections; keep commits small and continuously push for review.
 
 ### Committed Work
-1. **Title**
-	- Outcome:
-	- Scope (files/modules):
+1. **Repeat sections + variable mapping stabilization**
+	- Outcome: Word templates using `{{#Collection}}...{{/Collection}}` expand reliably and token replacement works even when Word splits tokens across runs.
+	- Scope (files/modules): `src/STLLayouts.OfficeGen`, `src/STLLayouts.Services`, SQL views/patches under `SQL/`.
 	- Acceptance criteria:
-	- Non-goals:
+		- Build succeeds via `scripts/build.ps1`
+		- Governance checks pass (`scripts/verify-repo-clean.ps1`)
+		- List/table placeholders are correctly expanded and populated
+	- Non-goals: Implementing full template versioning UI workflow.
 
 ### Stretch Work (optional)
 1.
 
 ## Next Sprint (Draft)
-**Sprint**: Sprint ____
-**Sprint Goal**: __________
+**Sprint**: Sprint 2026-02 (Template versioning)
+**Sprint Goal**: Implement template versioning + duplicate-name UX.
 1.
 
 ## Backlog
