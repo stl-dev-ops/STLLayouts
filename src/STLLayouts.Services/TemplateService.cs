@@ -10,9 +10,9 @@ public partial class TemplateService(ITemplateRepository repository, ILogger<Tem
     private readonly ITemplateRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     private readonly ILogger<TemplateService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    private static Regex MustacheRegex => MustacheVarRegex();
-    private static Regex TemplateLiteralRegex => TemplateLiteralVarRegex();
-    private static Regex SimpleBraceRegex => SimpleBraceVarRegex();
+    private static readonly Regex MustacheRegex = new(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}", RegexOptions.Compiled);
+    private static readonly Regex TemplateLiteralRegex = new(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}", RegexOptions.Compiled);
+    private static readonly Regex SimpleBraceRegex = new(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)", RegexOptions.Compiled);
 
     public async Task<List<Template>> GetAllTemplatesAsync()
     {
@@ -223,13 +223,4 @@ public partial class TemplateService(ITemplateRepository repository, ILogger<Tem
 
         return [.. variables.OrderBy(v => v)];
     }
-
-    [GeneratedRegex(@"\{\{([a-zA-Z_][a-zA-Z0-9_]*)\}\}")]
-    private static partial Regex MustacheVarRegex();
-
-    [GeneratedRegex(@"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}")]
-    private static partial Regex TemplateLiteralVarRegex();
-
-    [GeneratedRegex(@"\{([a-zA-Z_][a-zA-Z0-9_]*)\}(?![^{]*:)")]
-    private static partial Regex SimpleBraceVarRegex();
 }

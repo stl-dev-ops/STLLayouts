@@ -2,9 +2,9 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Extensions.Logging;
 using STLLayouts.Core.Entities;
 using STLLayouts.Core.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace STLLayouts.OfficeGen;
 
@@ -29,7 +29,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
         var sw = Stopwatch.StartNew();
 
         Directory.CreateDirectory(options.OutputPath);
-        var outputFileName = $"{SanitizeFileName(template.TemplateName)}_{DateTime.Now:yyyyMMdd_HHmms}.docx";
+        var outputFileName = $"{SanitizeFileName(template.TemplateName)}_{DateTime.Now:yyyyMMdd_HHmmss}.docx";
         var outputPath = Path.Combine(options.OutputPath, outputFileName);
 
         File.Copy(template.FilePath, outputPath, overwrite: true);
@@ -37,8 +37,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
         using (var doc = WordprocessingDocument.Open(outputPath, true))
         {
             ExpandRepeatingRows(doc, variables);
-            ReplaceScalarText(doc, variables, options);
-
+            ReplaceScalarText(doc, variables);
             doc.MainDocumentPart?.Document.Save();
         }
 
@@ -57,9 +56,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
     private void ExpandRepeatingRows(WordprocessingDocument doc, Dictionary<string, object> variables)
     {
-        // Heuristic: collection rows are marked with {{#CollectionName}} and {{/CollectionName}} in the same table.
-        // We log what we expand so it’s obvious whether list content was detected.
-
         var body = doc.MainDocumentPart?.Document?.Body;
         if (body == null) return;
 
@@ -79,8 +75,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
                 _logger.LogInformation("Word repeat block start found for collection '{CollectionName}'", collectionName);
 
-                // optionally allow same-row end marker, but primary support is start+end markers within same row.
-                // We only require a start marker row. If the next row is an end marker row, remove it too.
                 var endRowIndex = -1;
                 for (var j = i; j < rows.Count; j++)
                 {
@@ -93,18 +87,13 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
                     }
                 }
 
-                // Template row is expected immediately after the start marker row.
                 if (i + 1 >= rows.Count)
                 {
-                    // remove start marker row and bail
                     row.Remove();
                     break;
                 }
 
-                var templateRowIndex = i + 1;
-                var templateRow = rows[templateRowIndex];
-
-                // Determine where to insert generated rows.
+                var templateRow = rows[i + 1];
                 var insertBefore = endRowIndex >= 0 && endRowIndex < rows.Count ? rows[endRowIndex] : null;
 
                 var items = TryGetCollectionItems(variables, collectionName);
@@ -140,12 +129,10 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
                     }
                 }
 
-                // Remove marker row, template row, and optional end marker row.
                 row.Remove();
                 templateRow.Remove();
                 insertBefore?.Remove();
 
-                // refresh local snapshot and restart scan (since we mutated)
                 rows = [.. table.Elements<TableRow>()];
                 i = -1;
             }
@@ -169,7 +156,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
             return [.. e];
         }
 
-        // tolerate List<Dictionary<string, object>> too
         if (value is IEnumerable<Dictionary<string, object>> e2)
         {
             return
@@ -183,13 +169,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
     private static void ReplaceRowTokens(TableRow row, string collectionName, Dictionary<string, object?> item)
     {
-        // Word frequently splits a placeholder like {{OrderLines.Description1}} across multiple runs/text nodes.
-        //
-        // Important: do NOT concatenate across the entire row, because that can cross table-cell boundaries
-        // (different column formatting) and cause content to be redistributed into the wrong cell.
-        //
-        // We therefore apply the run-spanning replacement per-cell.
-
         foreach (var cell in row.Elements<TableCell>())
         {
             var texts = cell.Descendants<Text>().ToList();
@@ -203,12 +182,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
         IReadOnlyList<Text> texts,
         TokenReplacer replaceInTokenText)
     {
-        // We look for any token start "{{" and token end "}}" across the concatenated stream of text.
-        // When found, we replace the token substring using the provided replacer, then distribute the
-        // updated combined text back into the original Text nodes preserving their original lengths
-        // (so run formatting remains stable).
-
-        // Build a working buffer of the concatenated text and map absolute indices to nodes.
         var totalLen = 0;
         for (var i = 0; i < texts.Count; i++)
         {
@@ -226,7 +199,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
         static int FindNext(string haystack, string needle, int start)
             => haystack.IndexOf(needle, start, StringComparison.Ordinal);
 
-        // Iterate over tokens; update `combined` as we go.
         var scanIndex = 0;
         while (scanIndex < combined.Length)
         {
@@ -243,18 +215,18 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
                 continue;
             }
 
-            var token = combined.Substring(start, tokenLen);
+            var token = new string(combined.AsSpan(start, tokenLen));
             var replaced = replaceInTokenText(token);
 
             if (!string.Equals(token, replaced, StringComparison.Ordinal))
             {
-                // Avoid substring + concatenation allocations.
                 combined = string.Concat(
                     combined.AsSpan(0, start),
                     replaced.AsSpan(),
                     combined.AsSpan(end + 2));
+
                 changed = true;
-                scanIndex = start + (replaced?.Length ?? 0);
+                scanIndex = start + replaced.Length;
             }
             else
             {
@@ -267,8 +239,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
             return;
         }
 
-        // Redistribute the updated combined text back into each Text node.
-        // Preserve original per-node lengths as much as possible; last node gets any overflow/underflow.
         var idx = 0;
         for (var i = 0; i < texts.Count; i++)
         {
@@ -300,7 +270,6 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
     private static string ReplaceItemTokens(string input, string collectionName, Dictionary<string, object?> item)
     {
-        // Replace {{Collection.Field}} occurrences.
         var pattern = $"\\{{\\{{\\s*{Regex.Escape(collectionName)}\\.(?<field>[A-Za-z0-9_]+)\\s*\\}}\\}}";
         return Regex.Replace(input, pattern, m =>
         {
@@ -310,13 +279,12 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
                 return value.ToString() ?? string.Empty;
             }
 
-            // case-insensitive lookup fallback
             var kvp = item.FirstOrDefault(k => string.Equals(k.Key, field, StringComparison.OrdinalIgnoreCase));
             return kvp.Key != null ? (kvp.Value?.ToString() ?? string.Empty) : string.Empty;
         }, RegexOptions.IgnoreCase);
     }
 
-    private static void ReplaceScalarText(WordprocessingDocument doc, Dictionary<string, object> variables, DocumentGenerationOptions _)
+    private static void ReplaceScalarText(WordprocessingDocument doc, Dictionary<string, object> variables)
     {
         var texts = doc.MainDocumentPart?.Document?.Descendants<Text>().ToList();
         if (texts is not { Count: > 0 }) return;
@@ -327,12 +295,10 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
 
             var updated = t.Text;
 
-            // Replace scalar tokens {{Var}}.
             foreach (var kvp in variables)
             {
                 if (kvp.Value is IEnumerable<Dictionary<string, object?>> || kvp.Value is IReadOnlyList<Dictionary<string, object?>>)
                 {
-                    // collections are handled elsewhere
                     continue;
                 }
 
@@ -340,16 +306,12 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
                 updated = updated.Replace(TemplateToken.Single(kvp.Key), replacement, StringComparison.OrdinalIgnoreCase);
             }
 
-            // Missing tokens: leave as-is (options behavior could be extended later).
             t.Text = updated;
         }
     }
 
     private static string GetRowText(TableRow row)
-    {
-        // Best-effort: concatenate Text nodes.
-        return string.Concat(row.Descendants<Text>().Select(t => t.Text)).Trim();
-    }
+        => string.Concat(row.Descendants<Text>().Select(t => t.Text)).Trim();
 
     private static string SanitizeFileName(string name)
     {
