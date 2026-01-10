@@ -179,7 +179,7 @@ public sealed class WordDocumentGenerator(ILogger<WordDocumentGenerator> logger)
     }
 
     private static void ReplaceTokensAcrossTextNodes(
-        IReadOnlyList<Text> texts,
+        List<Text> texts,
         TokenReplacer replaceInTokenText)
     {
         var totalLen = 0;
