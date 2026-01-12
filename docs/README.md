@@ -25,3 +25,11 @@ See root-level docs like:
 - `DATA_MAPPING.md`
 - `OPERATIONS.md`
 - `DEPLOYMENT.md`
+
+# Docs Index
+
+## Master plan
+- `docs/MASTER_PLAN.md` — canonical big-picture plan and milestone checklist for incremental delivery.
+
+## Governance
+- `docs/governance.md`

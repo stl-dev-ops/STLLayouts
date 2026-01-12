@@ -2,6 +2,7 @@
 - Related issue: #
 - Issue URL: 
 - Delta time (hh:mm:ss): 
+- Master plan milestone: (e.g., `docs/MASTER_PLAN.md` → M2 → "Support {{#Collection}} blocks")
 
 ## Changes
 - 

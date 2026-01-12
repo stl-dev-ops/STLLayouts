@@ -80,6 +80,7 @@ jobs:
           require '^\- Related issue: #[0-9]+' 'Related issue: #<n>'
           require '^\- Issue URL: https://github.com/stl-dev-ops/STLLayouts/issues/[0-9]+' 'Issue URL'
           require '^\- Delta time \(hh:mm:ss\): [0-9]{2}:[0-9]{2}:[0-9]{2}' 'Delta time (hh:mm:ss)'
+          require '^\- Master plan milestone: .+' 'Master plan milestone'
 
           echo "OK: PR body issue + delta time fields present."
 

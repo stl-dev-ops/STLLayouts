@@ -52,3 +52,14 @@ Commit message requirements (example):
 
 Recommended close syntax:
 - `Closes #123`
+
+## Master Plan Governance (Always-visible progress)
+This repo maintains a canonical master plan with milestone checklists in `docs/MASTER_PLAN.md`.
+
+Requirements:
+- Every issue must identify the target milestone (e.g., `M2 — Word Repeat Blocks`).
+- Every PR must include a master plan reference (milestone + bullet item).
+- When work is completed, update:
+  - `docs/MASTER_PLAN.md` (check off the deliverable)
+  - `TODO.md` (move/mark sprint item)
+  - `CHANGELOG.md` (if user-visible behavior changed)

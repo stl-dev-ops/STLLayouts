@@ -16,6 +16,7 @@ This is the canonical backlog. It is structured into sprints so humans and Copil
 1. **Repeat sections + variable mapping stabilization**
 	- Outcome: Word templates using `{{#Collection}}...{{/Collection}}` expand reliably and token replacement works even when Word splits tokens across runs.
 	- Scope (files/modules): `src/STLLayouts.OfficeGen`, `src/STLLayouts.Services`, SQL views/patches under `SQL/`.
+	- Master plan: `docs/MASTER_PLAN.md` → M1 (Variable Mapping) and M2 (Word Repeat Blocks)
 	- Acceptance criteria:
 		- Build succeeds via `scripts/build.ps1`
 		- Governance checks pass (`scripts/verify-repo-clean.ps1`)
