@@ -19,6 +19,14 @@ If the task involves running/testing/launching the application:
 - Confirm output shows prior instance cleanup (process termination) when running.
 - Confirm logs appear under `logs/`.
 
+## Binding rule: issue-per-change + delta time
+- Every commit must reference a GitHub issue number (`#<issue>`).
+- Every commit message must include trailers:
+  - `Issue: https://github.com/stl-dev-ops/STLLayouts/issues/<issue>`
+  - `Delta-Time: hh:mm:ss`
+- Issues must include a `Time spent (hh:mm:ss)` field.
+- PRs must include related issue number, issue URL, and delta time.
+
 ## If tasks are missing/broken
 - Fix `.vscode/tasks.json` to point at the repo scripts, then re-run via the scripts (CLI) and/or tasks.
 

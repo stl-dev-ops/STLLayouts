@@ -13,3 +13,6 @@ labels: enhancement
 
 ## Notes / context
 - 
+
+## Time spent
+- Time spent (hh:mm:ss):

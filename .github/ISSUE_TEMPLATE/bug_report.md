@@ -21,3 +21,6 @@ labels: bug
 ## Environment
 - OS:
 - App version/branch:
+
+## Time spent
+- Time spent (hh:mm:ss):

@@ -1,8 +1,10 @@
 ## Summary
--
+- Related issue: #
+- Issue URL: 
+- Delta time (hh:mm:ss): 
 
 ## Changes
--
+- 
 
 ## How to Test
 -

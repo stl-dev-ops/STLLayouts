@@ -67,17 +67,27 @@ Thank you for considering contributing to STL Layouts! This document provides gu
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
 4. Add tests for new functionality
-5. Ensure all tests pass: `dotnet test`
+5. Use repo scripts for build/run (do not run raw `dotnet build/run`):
+   - `pwsh -NoProfile -ExecutionPolicy Bypass -Command "./scripts/build.ps1"`
+   - `pwsh -NoProfile -ExecutionPolicy Bypass -Command "./scripts/rebuild.ps1"`
 6. Update documentation if needed
-7. Commit your changes: `git commit -m "Add feature: description"`
-8. Push to your fork: `git push origin feature/my-feature`
-9. Submit a pull request
+7. Create/associate a GitHub issue for the change and reference it in every commit.
+8. Commit your changes (must reference the issue and include delta time trailers):
+   - Include `#<issue>` in the subject/body.
+   - Include `Issue: <issue url>` trailer.
+   - Include `Delta-Time: hh:mm:ss` trailer.
+9. Push to your fork: `git push origin feature/my-feature`
+10. Submit a pull request
 
 **Pull Request Template**:
 ```
 **Description**: What does this PR do?
 
 **Related Issue**: Fixes #123
+
+**Issue URL**: https://github.com/stl-dev-ops/STLLayouts/issues/123
+
+**Delta time (hh:mm:ss)**: 00:30:00
 
 **Changes Made**:
 - Change 1
@@ -117,20 +127,19 @@ cd STLLayouts
 ### Build Solution
 
 ```powershell
-dotnet restore
-dotnet build
+./scripts/build.ps1
 ```
 
 ### Run Tests
 
 ```powershell
-dotnet test
+./scripts/build.ps1
 ```
 
 ### Run Application
 
 ```powershell
-dotnet run --project src/STLLayouts.WpfApp
+./scripts/run-debug.ps1
 ```
 
 ---
@@ -234,12 +243,14 @@ public class JobService : IJobService
 
 **Example**:
 ```
-feat: Add rule priority conflict resolution
+feat: Add rule priority conflict resolution (#42)
 
 Implemented logic to handle multiple rules matching the same job.
 Rules are now evaluated in priority order (highest first), and
 all matching templates are presented to the user.
 
+Issue: https://github.com/stl-dev-ops/STLLayouts/issues/42
+Delta-Time: 00:45:00
 Closes #42
 ```
 

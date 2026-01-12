@@ -18,6 +18,71 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Enforce issue + delta time governance in commits
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Determine commit range
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+            range="$base..$head"
+          else
+            # push to master
+            range="${{ github.event.before }}..${{ github.sha }}"
+          fi
+
+          echo "Validating commit messages in range: $range"
+
+          # For each commit, require:
+          # 1) issue reference (#123) anywhere in subject/body
+          # 2) Issue: https://github.com/stl-dev-ops/STLLayouts/issues/123 trailer
+          # 3) Delta-Time: hh:mm:ss trailer
+          while read -r sha; do
+            msg=$(git log -1 --pretty=%B "$sha")
+
+            if ! grep -Eq '#[0-9]+' <<<"$msg"; then
+              echo "ERROR: Commit $sha missing issue reference like #123" >&2
+              exit 1
+            fi
+
+            if ! grep -Eq '^Issue: https://github.com/stl-dev-ops/STLLayouts/issues/[0-9]+\s*$' <<<"$msg"; then
+              echo "ERROR: Commit $sha missing 'Issue: https://github.com/stl-dev-ops/STLLayouts/issues/<n>' trailer" >&2
+              exit 1
+            fi
+
+            if ! grep -Eq '^Delta-Time: [0-9]{2}:[0-9]{2}:[0-9]{2}\s*$' <<<"$msg"; then
+              echo "ERROR: Commit $sha missing 'Delta-Time: hh:mm:ss' trailer" >&2
+              exit 1
+            fi
+          done < <(git rev-list "$range")
+
+          echo "OK: commit issue and delta time governance checks passed."
+
+      - name: Enforce PR description includes issue + delta time
+        if: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          body=$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")
+
+          require() {
+            local pat="$1"
+            local label="$2"
+            if ! grep -Eq "$pat" <<<"$body"; then
+              echo "ERROR: PR body missing required field: $label" >&2
+              exit 1
+            fi
+          }
+
+          require '^\- Related issue: #[0-9]+' 'Related issue: #<n>'
+          require '^\- Issue URL: https://github.com/stl-dev-ops/STLLayouts/issues/[0-9]+' 'Issue URL'
+          require '^\- Delta time \(hh:mm:ss\): [0-9]{2}:[0-9]{2}:[0-9]{2}' 'Delta time (hh:mm:ss)'
+
+          echo "OK: PR body issue + delta time fields present."
+
       - name: Block tracked temp/log artifacts
         shell: bash
         run: |

@@ -34,3 +34,21 @@ Operator Notes
 - Trigger execution via the repo scripts (or IDE tasks/tools wired to them).
 - On failures, open the latest log file in `logs/`.
 - If a task is missing or altered, restore it and re-run.
+
+## Work Tracking Governance (Issues + Delta Time)
+This repo requires that every meaningful change is tracked as a GitHub issue and that time spent is recorded.
+
+Requirements:
+- Every commit must reference a GitHub issue number (e.g., `#123`) and include an issue URL trailer.
+- Every commit must include a delta time trailer.
+- Every issue must include a `Time spent (hh:mm:ss)` field in the issue body.
+- Every PR must include the related issue, issue URL, and delta time fields.
+
+Commit message requirements (example):
+- Subject contains `#123`
+- Trailers include:
+  - `Issue: https://github.com/stl-dev-ops/STLLayouts/issues/123`
+  - `Delta-Time: 00:37:12`
+
+Recommended close syntax:
+- `Closes #123`
